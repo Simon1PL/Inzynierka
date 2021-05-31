@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'dart:convert';
+import 'package:projekt/widgets/app_bar.dart';
+import 'package:projekt/widgets/menu.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,43 +17,12 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[400],
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('R-M DVB-T Tunner',
-        style: TextStyle(
-          color: Colors.black
-        )),
-        centerTitle: true,
-        elevation: 0,
+      backgroundColor: Colors.grey[200],
+      appBar: MyAppBar(
+        text: "R-M DVB-T Tuner",
       ),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            FlatButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/recordings');
-                },
-                icon: Icon(Icons.edit_location),
-                label: Text(
-                    'Edit Location'
-                )
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          height: 60.0,
-          color: Colors.white,
-          child: Row(
-            children: [
-              Text("Home"),
-              Text("Recordings"),
-              Text("Programs"),
-            ],
-          ),
-        ),
+      bottomNavigationBar: Menu(
+        currentIndex: 0,
       ),
     );
   }
