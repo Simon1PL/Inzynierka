@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projekt/pages/Programs/favorites.dart';
+import 'package:projekt/pages/Programs/single_program_info.dart';
 import 'package:projekt/pages/Programs/tv_program.dart';
 import 'pages/Recordings/scheduled.dart';
 import 'pages/home.dart';
@@ -17,5 +18,6 @@ void main() => runApp(MaterialApp(
       '/programs/favorites': (context) => Favorites(),
       '/recordings/recorded': (context) => Recorded(),
       '/recordings/scheduled': (context) => Scheduled(),
+      SingleProgram.routeName: (context) => SingleProgram(),
     }
 ));
