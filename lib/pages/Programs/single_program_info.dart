@@ -24,6 +24,7 @@ class _SingleProgram extends State<SingleProgram> {
         text: "",
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +32,7 @@ class _SingleProgram extends State<SingleProgram> {
               Expanded(
                 flex: 1,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 30/*it has to be equal to favorite icon size to be in center*/, bottom: 12.0),
+                  padding: EdgeInsets.only(left: 40/*it has to be equal to favorite icon size + right padding to be in center*/, right: 10, bottom: 12.0),
                   child: Text(
                     program.title,
                     textAlign: TextAlign.center,
