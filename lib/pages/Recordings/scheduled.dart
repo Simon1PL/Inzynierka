@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:projekt/services/tuner_service.dart';
 import 'package:projekt/widgets/app_bar_buttons.dart';
 import 'package:projekt/widgets/button.dart';
+import 'package:projekt/widgets/loading_list.dart';
 import 'package:projekt/widgets/menu.dart';
 
 class Scheduled extends StatefulWidget {
@@ -9,10 +11,21 @@ class Scheduled extends StatefulWidget {
 }
 
 class _Recordings extends State<Scheduled> {
+  List<Program> programs = [];
+  bool dataLoaded = false;
 
   @override
   void initState() {
     super.initState();
+    loadScheduled();
+  }
+
+  loadScheduled() async {
+    List<Program> programsTmp = await getScheduled(1);
+    setState(() {
+      this.programs = programsTmp;
+      this.dataLoaded = true;
+    });
   }
 
   @override
@@ -29,6 +42,7 @@ class _Recordings extends State<Scheduled> {
           MyButton("Scheduled", true),
         ],
       ),
+      body: getView(programs, dataLoaded, "Something goes wrong, can not load scheduled programs"),
       bottomNavigationBar: Menu(
         currentIndex: 1
       ),
