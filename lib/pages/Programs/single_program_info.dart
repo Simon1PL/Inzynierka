@@ -57,13 +57,13 @@ class _SingleProgram extends State<SingleProgram> {
               ),
             ],
           ),
-          Text(program.subtitle,
+          Text(program.subtitle.toString(),
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
             ),
           ),
-          Text(program.description,
+          Text(program.description.toString(),
             style: TextStyle(
               fontSize: 17,
             ),
