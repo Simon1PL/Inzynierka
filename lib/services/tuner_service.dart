@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
 import 'dart:convert';
 
-String url = "http://localhost:5000";
+String url = "https://damp-springs-89170.herokuapp.com";
 
 class Program {
   String channelName;
