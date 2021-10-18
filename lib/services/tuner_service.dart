@@ -1,35 +1,32 @@
 import 'package:http/http.dart';
+import 'package:projekt/models/program_model.dart';
 import 'dart:convert';
+import 'package:projekt/services/globals.dart';
 
-String url = "https://damp-springs-89170.herokuapp.com";
-
-class Program {
-  String channelName;
-  String channelId;
-  DateTime start;
-  DateTime stop;
-  String title;
-  String? subtitle;
-  String? summary;
-  String? description;
-  bool favorite;
-  bool alreadySaved;
-
-  Program(this.channelName, int start, int stop, this.title, this.subtitle,
-      this.summary, this.description, this.channelId, this.alreadySaved, this.favorite)
-      :
-        this.start = new DateTime.fromMillisecondsSinceEpoch(start * 1000),
-        this.stop = new DateTime.fromMillisecondsSinceEpoch(stop * 1000);
-}
-
-Future<List<Program>> getEpg(int tunerId) async {
+Future<List<ProgramModel>?> getEpg() async {
   try{
-    Response response = await get(Uri.parse(url + "/epg?id=" + tunerId.toString()));
+    Response response = await get(Uri.parse(url + "/epg?id=" + selectedTunerId.toString()));
     if (response.statusCode != 200) {
       throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
     }
     List<dynamic> objects = jsonDecode(utf8.decode(response.bodyBytes));
-    List<Program> programs = objects.map((e) => Program(e["channelName"], e["start"], e["stop"], e["title"], e["subtitle"], e["summary"], e["description"], e["channelUuid"], false, false)).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channelName"], p["channelUuid"], p["start"], p["stop"], p["title"], p["subtitle"], p["summary"], p["description"], p["recordSize"], p["fileName"], p["favorite"], p["alreadyScheduled"])).toList();
+    return programs;
+  }
+  catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+Future<List<ProgramModel>> getScheduled() async {
+  try{
+    Response response = await get(Uri.parse(url + "/orders?id=" + selectedTunerId.toString()));
+    if (response.statusCode != 200) {
+      throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
+    }
+    List<dynamic> objects = jsonDecode(utf8.decode(response.bodyBytes));
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channelName"], p["channelUuid"], p["start"], p["stop"], p["title"], p["subtitle"], p["summary"], p["description"], p["recordSize"], p["fileName"], p["favorite"], true)).toList();
     return programs;
   }
   catch (e) {
@@ -38,14 +35,14 @@ Future<List<Program>> getEpg(int tunerId) async {
   }
 }
 
-Future<List<Program>> getScheduled(int tunerId) async {
+Future<List<ProgramModel>> getRecorded() async {
   try{
-    Response response = await get(Uri.parse(url + "/orders?id=" + tunerId.toString()));
+    Response response = await get(Uri.parse(url + "/recorded?id=" + selectedTunerId.toString()));
     if (response.statusCode != 200) {
       throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
     }
     List<dynamic> objects = jsonDecode(utf8.decode(response.bodyBytes));
-    List<Program> programs = objects.map((e) => Program(e["channelName"], e["start"], e["stop"], e["title"], e["subtitle"], e["summary"], e["description"], e["channelUuid"], e["alreadySaved"], e["favorite"])).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channelName"], p["channelUuid"], p["start"], p["stop"], p["program_name"], p["subtitle"], p["summary"], p["description"], p["recordSize"], p["program_name"], p["favorite"], true)).toList();
     return programs;
   }
   catch (e) {
@@ -54,10 +51,10 @@ Future<List<Program>> getScheduled(int tunerId) async {
   }
 }
 
-Future<bool> postOrder(int tunerId, Program program) async {
+Future<bool> postOrder(ProgramModel program) async {
   try{
-    Uri uri = Uri.parse(url + "/orders?id=" + tunerId.toString());
-    var body = jsonEncode([{"channelUuid": program.channelId, "start": program.start.millisecondsSinceEpoch/1000, "stop": program.stop.millisecondsSinceEpoch/1000, "channelName": program.channelName, "title": program.title, "subtitle": program.subtitle, "summary": program.summary, "description": program.description, "favorite": program.favorite, "alreadySaved": program.alreadySaved}]);
+    Uri uri = Uri.parse(url + "/orders?id=" + selectedTunerId.toString());
+    var body = jsonEncode([{"channel_id": program.channelId, "start": program.start!.millisecondsSinceEpoch/1000, "end": program.stop!.millisecondsSinceEpoch/1000}]);
     Response response = await post(uri, body: body);
     if (response.statusCode != 200) {
       throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));

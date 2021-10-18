@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projekt/models/program_model.dart';
 import 'package:projekt/services/tuner_service.dart';
 import 'package:projekt/widgets/app_bar_buttons.dart';
 import 'package:projekt/widgets/button.dart';
@@ -11,7 +12,7 @@ class Scheduled extends StatefulWidget {
 }
 
 class _Recordings extends State<Scheduled> {
-  List<Program> programs = [];
+  List<ProgramModel>? programs;
   bool dataLoaded = false;
 
   @override
@@ -21,7 +22,7 @@ class _Recordings extends State<Scheduled> {
   }
 
   loadScheduled() async {
-    List<Program> programsTmp = await getScheduled(1);
+    List<ProgramModel> programsTmp = await getScheduled();
     setState(() {
       this.programs = programsTmp;
       this.dataLoaded = true;
@@ -34,18 +35,16 @@ class _Recordings extends State<Scheduled> {
       backgroundColor: Colors.grey[200],
       appBar: MyAppBarWithButtons(
         buttons: [
-          MyButton(
-            "Recorded",
-            false,
-            () {Navigator.pushNamedAndRemoveUntil(context, "/recordings/recorded", (route) => false);}
-          ),
+          MyButton("Recorded", false, () {
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/recordings/recorded", (route) => false);
+          }),
           MyButton("Scheduled", true),
         ],
       ),
-      body: getView(programs, dataLoaded, "Something goes wrong, can not load scheduled programs"),
-      bottomNavigationBar: Menu(
-        currentIndex: 1
-      ),
+      body: getView(programs, dataLoaded,
+          "Something goes wrong, can not load scheduled programs"),
+      bottomNavigationBar: Menu(currentIndex: 1),
     );
   }
 }

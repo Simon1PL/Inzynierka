@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:projekt/models/program_model.dart';
 import 'package:projekt/pages/Programs/single_program_info.dart';
 import 'package:projekt/services/alert_service.dart';
 import 'package:projekt/services/tuner_service.dart';
 
 class SingleItemVerticalList extends StatefulWidget {
-  final Program model;
+  final ProgramModel model;
 
   SingleItemVerticalList(this.model);
 
@@ -14,7 +15,7 @@ class SingleItemVerticalList extends StatefulWidget {
 }
 
 class _SingleItemVerticalList extends State<SingleItemVerticalList> {
-  final Program model;
+  final ProgramModel model;
   _SingleItemVerticalList(this.model);
 
   @override
@@ -56,7 +57,7 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                       child: Padding(
                         padding: EdgeInsets.only(bottom: 12.0),
                         child: Text(
-                          model.title,
+                          model.title != null ? model.title! : "",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -66,11 +67,11 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        if (model.alreadySaved) return;
-                        bool result = await postOrder(1, model);
+                        if (model.alreadyScheduled) return;
+                        bool result = await postOrder(model);
                         if (result) {
                           setState(() {
-                            model.alreadySaved = true;
+                            model.alreadyScheduled = true;
                           });
                         }
                         else {
@@ -78,7 +79,7 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                         }
                       },
                       child: Icon(
-                        model.alreadySaved ? Icons.alarm_off : Icons.alarm,
+                        model.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
                         color: Colors.black,
                         size: 30,
                       ),
@@ -88,7 +89,7 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 15.0),
                   child: Text(
-                    model.channelName,
+                    model.channelName != null ? model.channelName! : "",
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
@@ -103,14 +104,14 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          DateFormat("dd.MM.yyyy").format(model.start),
+                          model.start != null ? DateFormat("dd.MM.yyyy").format(model.start!) : "",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
-                          DateFormat.Hm().format(model.start) + " - " + DateFormat.Hm().format(model.stop),
+                          model.start != null && model.stop != null ? DateFormat.Hm().format(model.start!) + " - " + DateFormat.Hm().format(model.stop!) : "",
                           style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w600,

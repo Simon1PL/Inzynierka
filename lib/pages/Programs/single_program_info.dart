@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:projekt/models/program_model.dart';
 import 'package:projekt/services/alert_service.dart';
 import 'package:projekt/services/tuner_service.dart';
 import 'package:projekt/widgets/app_bar.dart';
@@ -9,14 +10,14 @@ class SingleProgram extends StatefulWidget {
   static const String routeName = '/programs/program_info';
 
   @override
-  _SingleProgram createState() =>  _SingleProgram();
+  _SingleProgram createState() => _SingleProgram();
 }
 
 class _SingleProgram extends State<SingleProgram> {
-
   @override
   Widget build(BuildContext context) {
-    final Program program = ModalRoute.of(context)!.settings.arguments as Program;
+    final ProgramModel program =
+        ModalRoute.of(context)!.settings.arguments as ProgramModel;
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -32,9 +33,13 @@ class _SingleProgram extends State<SingleProgram> {
               Expanded(
                 flex: 1,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 40/*it has to be equal to favorite icon size + right padding to be in center*/, right: 10, bottom: 12.0),
+                  padding: EdgeInsets.only(
+                      left:
+                          40 /*it has to be equal to favorite icon size + right padding to be in center*/,
+                      right: 10,
+                      bottom: 12.0),
                   child: Text(
-                    program.title,
+                    program.title != null ? program.title! : "",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,
@@ -57,13 +62,15 @@ class _SingleProgram extends State<SingleProgram> {
               ),
             ],
           ),
-          Text(program.subtitle.toString(),
+          Text(
+            program.subtitle.toString(),
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
             ),
           ),
-          Text(program.description.toString(),
+          Text(
+            program.description.toString(),
             style: TextStyle(
               fontSize: 17,
             ),
@@ -75,14 +82,20 @@ class _SingleProgram extends State<SingleProgram> {
                 flex: 1,
                 child: Column(
                   children: [
-                    Text(program.channelName,
+                    Text(
+                      program.channelName != null ? program.channelName! : "",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      DateFormat("dd.MM.yyyy HH:mm").format(program.start) + " - " + DateFormat.Hm().format(program.stop),
+                      program.start != null && program.stop != null
+                          ? DateFormat("dd.MM.yyyy HH:mm")
+                                  .format(program.start!) +
+                              " - " +
+                              DateFormat.Hm().format(program.stop!)
+                          : "",
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -93,19 +106,19 @@ class _SingleProgram extends State<SingleProgram> {
               ),
               GestureDetector(
                 onTap: () async {
-                  if (program.alreadySaved) return;
-                  bool result = await postOrder(1, program);
+                  if (program.alreadyScheduled) return;
+                  bool result = await postOrder(program);
                   if (result) {
                     setState(() {
-                      program.alreadySaved = true;
+                      program.alreadyScheduled = true;
                     });
-                  }
-                  else {
-                    showAlertDialog(context, title: "Error", text: "Can not schedule the program");
+                  } else {
+                    showAlertDialog(context,
+                        title: "Error", text: "Can not schedule the program");
                   }
                 },
                 child: Icon(
-                  program.alreadySaved ? Icons.alarm_off : Icons.alarm,
+                  program.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
                   color: Colors.black,
                   size: 30,
                 ),
@@ -114,9 +127,7 @@ class _SingleProgram extends State<SingleProgram> {
           ),
         ],
       ),
-      bottomNavigationBar: Menu(
-          currentIndex: 1
-      ),
+      bottomNavigationBar: Menu(currentIndex: 1),
     );
   }
 }

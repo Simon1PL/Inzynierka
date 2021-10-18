@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projekt/models/program_model.dart';
 import 'package:projekt/services/tuner_service.dart';
 import 'package:projekt/widgets/app_bar_buttons.dart';
 import 'package:projekt/widgets/button.dart';
@@ -11,7 +12,7 @@ class TvProgram extends StatefulWidget {
 }
 
 class _Programs extends State<TvProgram> {
-  List<Program> programs = [];
+  List<ProgramModel>? programs;
   bool dataLoaded = false;
 
   @override
@@ -21,7 +22,8 @@ class _Programs extends State<TvProgram> {
   }
 
   loadEpg() async {
-    List<Program> programsTmp = await getEpg(1);
+    List<ProgramModel>? programsTmp = await getEpg();
+
     setState(() {
       this.programs = programsTmp;
       this.dataLoaded = true;
