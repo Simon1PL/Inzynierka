@@ -28,33 +28,36 @@ class ProgramListState extends State<ProgramList> {
     if (this._notFilteredList == null) return;
 
     var searchedText = _searchController.text.toLowerCase();
+    var searchByTitle = this
+        ._notFilteredList!
+        .where((element) =>
+            element.title != null &&
+            element.title!.toLowerCase().contains(searchedText))
+        .toList();
+
+    var searchNotByTitle = this
+        ._notFilteredList!
+        .where((element) =>
+            element.title != null &&
+            !element.title!.contains(searchedText) &&
+            ((element.summary != null &&
+                    element.summary!.contains(searchedText)) ||
+                (element.description != null &&
+                    element.description!.contains(searchedText)) ||
+                (element.subtitle != null &&
+                    element.subtitle!.contains(searchedText)) ||
+                (element.channelName != null &&
+                    element.channelName!.contains(searchedText)) ||
+                element.start.toString().contains(searchedText) ||
+                element.stop.toString().contains(searchedText)))
+        .toList();
+
+    var tmpList = <ProgramModel>[];
+    tmpList.addAll(searchByTitle);
+    tmpList.addAll(searchNotByTitle);
 
     setState(() {
-      this._list = this
-          ._notFilteredList!
-          .where((element) =>
-              element.title != null &&
-              element.title!.toLowerCase().contains(searchedText))
-          .toList();
-
-      var searchNotByTitle = this
-          ._notFilteredList!
-          .where((element) =>
-              element.title != null &&
-              !element.title!.contains(searchedText) &&
-              ((element.summary != null &&
-                      element.summary!.contains(searchedText)) ||
-                  (element.description != null &&
-                      element.description!.contains(searchedText)) ||
-                  (element.subtitle != null &&
-                      element.subtitle!.contains(searchedText)) ||
-                  (element.channelName != null &&
-                      element.channelName!.contains(searchedText)) ||
-                  element.start.toString().contains(searchedText) ||
-                  element.stop.toString().contains(searchedText)))
-          .toList();
-
-      this._list!.addAll(searchNotByTitle);
+      _list = tmpList;
     });
   }
 
@@ -66,7 +69,7 @@ class ProgramListState extends State<ProgramList> {
 
   @override
   Widget build(BuildContext context) {
-    if (_notFilteredList == null) {
+    if (_list == null) {
       return Center(
         child: Text(
           _errorText,
@@ -77,7 +80,7 @@ class ProgramListState extends State<ProgramList> {
           ),
         ),
       );
-    } else if (_notFilteredList!.length > 0) {
+    } else if (_list!.length > 0) {
       return Column(
         children: [
           Container(
@@ -100,13 +103,13 @@ class ProgramListState extends State<ProgramList> {
               ),
             ),
           ),
-          Expanded (
+          Expanded(
             child: ListView.builder(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemCount: _list!.length,
                 itemBuilder: (context, index) {
-                  return SingleItemVerticalList(_list![index]);
+                  return SingleItemVerticalList(ValueKey(_list![index]), _list![index]);
                 }),
           ),
         ],

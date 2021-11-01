@@ -8,7 +8,7 @@ import 'package:projekt/services/programs_service.dart';
 class SingleItemVerticalList extends StatefulWidget {
   final ProgramModel model;
 
-  SingleItemVerticalList(this.model);
+  SingleItemVerticalList(Key key, this.model) : super(key: key);
 
   @override
   _SingleItemVerticalList createState() =>  _SingleItemVerticalList(model);
