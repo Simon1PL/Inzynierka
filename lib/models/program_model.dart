@@ -22,7 +22,7 @@ class ProgramModel {
       this.subtitle,
       this.summary,
       this.description,
-      String? recordSize,
+      int? recordSize,
       this.fileName,
       bool? favorite,
       bool? alreadyScheduled,
@@ -33,7 +33,6 @@ class ProgramModel {
         this.stop = stop != null
             ? new DateTime.fromMillisecondsSinceEpoch(stop * 1000)
             : null,
-        this.recordSize = recordSize != null ? int.parse(recordSize) : null,
         this.favorite = favorite != null ? favorite : false,
         this.alreadyScheduled =
             alreadyScheduled != null ? alreadyScheduled : false;

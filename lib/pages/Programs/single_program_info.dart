@@ -50,7 +50,9 @@ class _SingleProgram extends State<SingleProgram> {
               ),
               GestureDetector(
                 onTap: () {
-                  !program.favorite ? addFavorite(program.title ?? "", context) : removeFavorite(program.title ?? "", context);
+                  !program.favorite
+                      ? addFavorite(program.title ?? "", context)
+                      : removeFavorite(program.title ?? "", context);
                   setState(() {
                     program.favorite = !program.favorite;
                   });
@@ -70,10 +72,18 @@ class _SingleProgram extends State<SingleProgram> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          Text(
-            program.description == null ? "sorry, we have no description for this program" : program.description!,
-            style: TextStyle(
-              fontSize: 17,
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Container(
+              height: 200,
+              child: Text(
+                program.description == null
+                    ? "sorry, we have no description for this program"
+                    : program.description!,
+                style: TextStyle(
+                  fontSize: 17,
+                ),
+              ),
             ),
           ),
           Row(
@@ -107,9 +117,12 @@ class _SingleProgram extends State<SingleProgram> {
               ),
               GestureDetector(
                 onTap: () async {
-                  if (program.alreadyScheduled || (program.alreadyScheduled && program.orderId == null)) return;
+                  if (program.alreadyScheduled && program.orderId == null)
+                    return;
 
-                  !program.alreadyScheduled ? postOrder(program, context) : removeOrder(program.orderId!, context);
+                  !program.alreadyScheduled
+                      ? await postOrder(program, context)
+                      : removeOrder(program.orderId!, context);
 
                   setState(() {
                     program.alreadyScheduled = !program.alreadyScheduled;
@@ -117,7 +130,9 @@ class _SingleProgram extends State<SingleProgram> {
                 },
                 child: Icon(
                   program.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
-                  color: program.alreadyScheduled && program.orderId == null ? Colors.grey : Colors.black,
+                  color: program.alreadyScheduled && program.orderId == null
+                      ? Colors.grey
+                      : Colors.black,
                   size: 30,
                 ),
               ),

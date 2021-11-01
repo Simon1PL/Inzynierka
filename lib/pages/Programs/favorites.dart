@@ -89,15 +89,13 @@ class _Programs extends State<Favorites> {
       ], 0),
       body: dataLoaded
           ? Column(children: [
-              dataLoaded
-                  ? ProgramList(
-                      programs, "Something goes wrong, can not get favorites")
-                  : Center(
-                      child: SpinKitFadingCircle(
-                        color: Colors.grey[800],
-                        size: 50,
-                      ),
-                    ),
+          ConstrainedBox(
+            constraints: new BoxConstraints(
+              maxHeight: 400.0,
+            ),
+                child: ProgramList(
+                    programs, "Something goes wrong, can not get favorites"),
+              ),
               Container(
                 margin: EdgeInsets.only(top: 20, bottom: 10),
                 child: Text(

@@ -50,10 +50,20 @@ class _SingleTunerState extends State<SingleTuner> {
       appBar: MyAppBar(
         text: "R-M DVB-T Tuner",
       ),
-      body: Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        Text("Tuner name: " + tunerModel.name!),
-        Text("Your role: " +
-            TunerModel.getUserRoleAsString(tunerModel.currentUserRole)),
+      body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Tuner name: " + tunerModel.name!),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Your role: " +
+              TunerModel.getUserRoleAsString(tunerModel.currentUserRole)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Tuner users: "),
+        ),
         ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
@@ -65,7 +75,7 @@ class _SingleTunerState extends State<SingleTuner> {
                     Text(users[index].username!),
                     Text("   Role: " +
                         TunerModel.getUserRoleAsString(users[index].userRole)),
-                    IconButton(
+                    if (tunerModel.currentUserRole == UserRoleForTuner.OWNER) IconButton(
                         onPressed: () {
                           removeUserFromTuner(
                               users[index].username!, tunerModel.tunerId);
@@ -73,7 +83,7 @@ class _SingleTunerState extends State<SingleTuner> {
                         icon: Icon(Icons.delete))
                   ]);
             }),
-        Row(
+        if (tunerModel.currentUserRole == UserRoleForTuner.OWNER) Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -100,6 +110,7 @@ class _SingleTunerState extends State<SingleTuner> {
                 var result = await inviteToTuner(_userNameController.text, tunerModel.tunerId, context);
                 if (result) {
                   _userNameController.clear();
+                  getTunerUsers();
                 }
               },
               child: Text(

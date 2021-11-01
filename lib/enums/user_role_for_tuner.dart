@@ -1,4 +1,6 @@
 enum UserRoleForTuner {
   USER,
-  OWNER
+  OWNER,
+  INVITED,
+  DECLINED
 }

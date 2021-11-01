@@ -43,18 +43,21 @@ class _Programs extends State<TvProgram> {
 
     List<ProgramModel>? recorded = await getRecorded();
     List<ProgramModel>? scheduled = await getScheduled();
-    List<String> alreadySaved = [];
+    List<ProgramModel> alreadySaved = [];
     if (recorded != null) {
-      programsTmp.addAll(recorded);
+      alreadySaved.addAll(recorded);
     }
 
     if (scheduled != null) {
-      programsTmp.addAll(scheduled);
+      alreadySaved.addAll(scheduled);
     }
 
     programsTmp
-        .where((element) => alreadySaved.contains(element.title))
-        .forEach((element) => element.alreadyScheduled = true);
+        .where((element) => alreadySaved.any((e) => e.title == element.title))
+        .forEach((element) {
+          element.alreadyScheduled = true;
+          element.orderId = alreadySaved.firstWhere((e) => e.title == element.title).orderId;
+        });
 
     setState(() {
       this.programs = programsTmp;

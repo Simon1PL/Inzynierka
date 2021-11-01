@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:projekt/services/tuners_service.dart';
 import 'package:projekt/widgets/app_bar.dart';
 import 'package:projekt/widgets/menu.dart';

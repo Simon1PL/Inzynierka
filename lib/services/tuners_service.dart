@@ -40,7 +40,7 @@ Future<bool> getTunersFromServer() async {
 
     List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
     SharedPreferences pref = await SharedPreferences.getInstance();
-    List<TunerModel> tuners = objects.map((p) => TunerModel(p[0], p[1].toString())).toList();
+    List<TunerModel> tuners = objects.map((p) => TunerModel(p[0], p[1].toString(), p[2])).toList();
     tuners.isNotEmpty ? pref.setInt("selectedTunerId", tuners[0].tunerId) : pref.remove("selectedTunerId");
     pref.setStringList("tuners", tuners.map((t) => json.encode(t.toJson())).toList());
     return true;
@@ -59,7 +59,7 @@ Future<List<TunerUserModel>?> getUsersForTuner(int tunerId) async {
     }
 
     List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
-    List<TunerUserModel> users = objects.map((p) => TunerUserModel(int.parse(p[0]), p[1], p[2])).toList();
+    List<TunerUserModel> users = objects.map((p) => TunerUserModel(p[0], p[1], p[2])).toList();
     return users;
   }
   catch (e) {

@@ -12,9 +12,17 @@ class TunerModel {
   static UserRoleForTuner? getUserRoleFromString(String? currentUserRole) {
     switch (currentUserRole) {
       case "owner":
+      case "Owner":
         return UserRoleForTuner.OWNER;
       case "user":
+      case "User":
         return UserRoleForTuner.USER;
+      case "invited":
+      case "Invited":
+        return UserRoleForTuner.INVITED;
+      case "declined":
+      case "Declined":
+        return UserRoleForTuner.DECLINED;
     }
   }
 
@@ -24,13 +32,18 @@ class TunerModel {
         return "Owner";
       case UserRoleForTuner.USER:
         return "User";
+      case UserRoleForTuner.INVITED:
+        return "Invited";
+      case UserRoleForTuner.DECLINED:
+        return "Declined";
+      default:
+        return "";
     }
-    return "";
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    var role = currentUserRole == UserRoleForTuner.OWNER ? "owner" : "user";
+    var role = getUserRoleAsString(currentUserRole);
     data['tunerId'] = this.tunerId;
     data['name'] = this.name;
     data['currentUserRole'] = role;

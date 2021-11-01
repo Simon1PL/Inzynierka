@@ -67,9 +67,9 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        if (model.alreadyScheduled || (model.alreadyScheduled && model.orderId == null)) return;
+                        if (model.alreadyScheduled && model.orderId == null) return;
 
-                        !model.alreadyScheduled ? postOrder(model, context) : removeOrder(model.orderId!, context);
+                        !model.alreadyScheduled ? await postOrder(model, context) : removeOrder(model.orderId!, context);
 
                         setState(() {
                           model.alreadyScheduled = !model.alreadyScheduled;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:projekt/enums/user_role_for_tuner.dart';
 import 'package:projekt/models/tuner_model.dart';
 import 'package:projekt/pages/Tuners/single_tuner.dart';
 import 'package:projekt/services/tuners_service.dart';
@@ -36,46 +37,74 @@ class _TunersState extends State<Tuners> {
       appBar: MyAppBar(
         text: "R-M DVB-T Tuner",
       ),
-      body: dataLoaded ?
-          Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: tunerList.length,
-            itemBuilder: (context, index) {
-              return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                Text(tunerList[index].name!),
-                Text("   Role: " +
-                    TunerModel.getUserRoleAsString(
-                        tunerList[index].currentUserRole)),
-                IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SingleTuner(tunerList[index]),
-                          ));
-                    },
-                    icon: Icon(Icons.edit))
-              ]);
-            }),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                    context,
-                    "/tuners/add");
-              },
-              child: Text(
-                'Add new',
-                style: TextStyle(fontSize: 25),
+      body: dataLoaded
+          ? Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: tunerList.length,
+                  itemBuilder: (context, index) {
+                    return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(tunerList[index].name!),
+                          Text("   Role: " +
+                              TunerModel.getUserRoleAsString(
+                                  tunerList[index].currentUserRole)),
+                          tunerList[index].currentUserRole ==
+                                  UserRoleForTuner.INVITED
+                              ? Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () async {
+                                          await acceptTuner(tunerList[index].tunerId);
+                                          getTunersFromServer();
+                                          setState(() {
+                                            tunerList[index].currentUserRole =
+                                                UserRoleForTuner.USER;
+                                          });
+                                        },
+                                        icon: Icon(Icons.done)),
+                                    IconButton(
+                                        onPressed: () async {
+                                          await declineTuner(
+                                              tunerList[index].tunerId);
+                                          getTunersFromServer();
+                                          setState(() {
+                                            tunerList.removeAt(index);
+                                          });
+                                        },
+                                        icon: Icon(Icons.cancel))
+                                  ],
+                                )
+                              : IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SingleTuner(tunerList[index]),
+                                        ));
+                                  },
+                                  icon: Icon(Icons.edit))
+                        ]);
+                  }),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, "/tuners/add");
+                },
+                child: Text(
+                  'Add new',
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+            ])
+          : Center(
+              child: SpinKitFadingCircle(
+                color: Colors.grey[800],
+                size: 50,
               ),
             ),
-      ]) : Center(
-        child: SpinKitFadingCircle(
-          color: Colors.grey[800],
-          size: 50,
-        ),
-      ),
       bottomNavigationBar: Menu(),
     );
   }

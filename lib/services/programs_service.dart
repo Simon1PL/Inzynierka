@@ -32,7 +32,7 @@ Future<List<ProgramModel>?> getScheduled() async {
     }
 
     List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
-    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channelName"], p["channelUuid"], p["start"], p["stop"], p["title"], p["subtitle"], p["summary"], p["description"], p["recordSize"], p["fileName"], p["favorite"], true, p["order_id"])).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channel_name"], p["channel_id"], p["start"], p["stop"], p["title"], p["subtitle"], p["summary"], p["description"], p["record_size"], p["file_name"], p["favorite"], true, p["id"])).toList();
     return programs;
   }
   catch (e) {
@@ -49,7 +49,7 @@ Future<List<ProgramModel>?> getRecorded() async {
     }
 
     List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
-    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channelName"], p["channel_id"], p["start"], p["end"], p["program_name"], p["subtitle"], p["summary"], p["description"], p["record_size"], p["file_name"], p["favorite"], true, p["favorite"])).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channel_name"], p["channel_uuid"], p["start"], p["stop"], p["title"], p["subtitle"], p["summary"], p["description"], p["record_size"], p["file_name"], p["favorite"], true, p["order_id"])).toList();
     return programs;
   }
   catch (e) {
@@ -65,7 +65,8 @@ Future<bool> postOrder(ProgramModel program, BuildContext context) async {
     if (response.statusCode != 200) {
       throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
     }
-
+    dynamic object = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
+    program.orderId = object["ids"][0];
     return true;
   }
   catch (e) {
@@ -76,7 +77,7 @@ Future<bool> postOrder(ProgramModel program, BuildContext context) async {
 
 Future<bool> removeOrder(int orderId, BuildContext context) async {
   try{
-    Response response = await serverDelete("/orders?tuner_id=" + (await selectedTunerId).toString() + "&order_id=" + orderId.toString());
+    Response response = await serverDelete("orders?tuner_id=" + (await selectedTunerId).toString() + "&order_id=" + orderId.toString());
     if (response.statusCode != 200) {
       throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
     }
