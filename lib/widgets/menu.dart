@@ -11,7 +11,7 @@ class Menu extends StatefulWidget {
 }
 
 class MenuState extends State<Menu> {
-  final List<String> routes = ["/home", "/recordings/recorded", "/programs/favorites"];
+  final List<String> routes = ["/home", "/recordings/scheduled", "/programs/tv_program"];
   int currentIndex = 0;
   bool noSelectedItem = true;
   MenuState(int? currentIndex) {

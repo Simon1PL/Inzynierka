@@ -1,0 +1,4 @@
+enum UserRoleForTuner {
+  USER,
+  OWNER
+}

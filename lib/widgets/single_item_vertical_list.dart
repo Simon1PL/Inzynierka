@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:projekt/models/program_model.dart';
 import 'package:projekt/pages/Programs/single_program_info.dart';
-import 'package:projekt/services/alert_service.dart';
-import 'package:projekt/services/tuner_service.dart';
+import 'package:projekt/services/favorite_service.dart';
+import 'package:projekt/services/programs_service.dart';
 
 class SingleItemVerticalList extends StatefulWidget {
   final ProgramModel model;
@@ -67,20 +67,17 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        if (model.alreadyScheduled) return;
-                        bool result = await postOrder(model);
-                        if (result) {
-                          setState(() {
-                            model.alreadyScheduled = true;
-                          });
-                        }
-                        else {
-                          showAlertDialog(context, title: "Error", text: "Can not schedule the program");
-                        }
+                        if (model.alreadyScheduled || (model.alreadyScheduled && model.orderId == null)) return;
+
+                        !model.alreadyScheduled ? postOrder(model, context) : removeOrder(model.orderId!, context);
+
+                        setState(() {
+                          model.alreadyScheduled = !model.alreadyScheduled;
+                        });
                       },
                       child: Icon(
                         model.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
-                        color: Colors.black,
+                        color: model.alreadyScheduled && model.orderId == null ? Colors.grey : Colors.black,
                         size: 30,
                       ),
                     ),
@@ -121,6 +118,7 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                     ),
                     GestureDetector(
                       onTap: () {
+                        !model.favorite ? addFavorite(model.title ?? "", context) : removeFavorite(model.title ?? "", context);
                         setState(() {
                           model.favorite = !model.favorite;
                         });

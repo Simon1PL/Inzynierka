@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:projekt/models/program_model.dart';
-import 'package:projekt/services/tuner_service.dart';
+import 'package:projekt/services/favorite_service.dart';
+import 'package:projekt/services/programs_service.dart';
 import 'package:projekt/widgets/app_bar_buttons.dart';
-import 'package:projekt/widgets/button.dart';
 import 'package:projekt/widgets/loading_list.dart';
 import 'package:projekt/widgets/menu.dart';
 
@@ -22,7 +23,22 @@ class _Recordings extends State<Scheduled> {
   }
 
   loadScheduled() async {
-    List<ProgramModel> programsTmp = await getScheduled();
+    List<ProgramModel>? programsTmp = await getScheduled();
+    if (programsTmp == null) {
+      setState(() {
+        this.programs = null;
+        this.dataLoaded = true;
+      });
+      return;
+    }
+
+    List<String>? favorites = await getFavorites();
+    if (favorites != null) {
+      programsTmp
+          .where((element) => favorites.contains(element.title))
+          .forEach((element) => element.favorite = true);
+    }
+
     setState(() {
       this.programs = programsTmp;
       this.dataLoaded = true;
@@ -33,17 +49,37 @@ class _Recordings extends State<Scheduled> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      appBar: MyAppBarWithButtons(
-        buttons: [
-          MyButton("Recorded", false, () {
+      appBar: MyAppBarWithButtons([
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
             Navigator.pushNamedAndRemoveUntil(
                 context, "/recordings/recorded", (route) => false);
-          }),
-          MyButton("Scheduled", true),
-        ],
-      ),
-      body: getView(programs, dataLoaded,
-          "Something goes wrong, can not load scheduled programs"),
+          },
+          child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              child: Text('Recorded')),
+        ),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/recordings/scheduled", (route) => false);
+          },
+          child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              child: Text('Scheduled')),
+        ),
+      ], 1),
+      body: dataLoaded
+          ? ProgramList(
+              programs, "Something goes wrong, can not load scheduled programs")
+          : Center(
+              child: SpinKitFadingCircle(
+                color: Colors.grey[800],
+                size: 50,
+              ),
+            ),
       bottomNavigationBar: Menu(currentIndex: 1),
     );
   }

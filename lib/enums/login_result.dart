@@ -1,4 +1,0 @@
-enum LoginResult {
-  LoginSuccess,
-  WrongLoginOrPassword
-}

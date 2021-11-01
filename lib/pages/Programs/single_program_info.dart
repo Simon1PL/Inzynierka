@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:projekt/models/program_model.dart';
-import 'package:projekt/services/alert_service.dart';
-import 'package:projekt/services/tuner_service.dart';
+import 'package:projekt/services/favorite_service.dart';
+import 'package:projekt/services/programs_service.dart';
 import 'package:projekt/widgets/app_bar.dart';
 import 'package:projekt/widgets/menu.dart';
 
@@ -39,7 +39,7 @@ class _SingleProgram extends State<SingleProgram> {
                       right: 10,
                       bottom: 12.0),
                   child: Text(
-                    program.title != null ? program.title! : "",
+                    program.title != null ? program.title! : "No title!",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,
@@ -50,6 +50,7 @@ class _SingleProgram extends State<SingleProgram> {
               ),
               GestureDetector(
                 onTap: () {
+                  !program.favorite ? addFavorite(program.title ?? "", context) : removeFavorite(program.title ?? "", context);
                   setState(() {
                     program.favorite = !program.favorite;
                   });
@@ -63,14 +64,14 @@ class _SingleProgram extends State<SingleProgram> {
             ],
           ),
           Text(
-            program.subtitle.toString(),
+            program.subtitle == null ? "" : program.subtitle!,
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
             ),
           ),
           Text(
-            program.description.toString(),
+            program.description == null ? "sorry, we have no description for this program" : program.description!,
             style: TextStyle(
               fontSize: 17,
             ),
@@ -106,20 +107,17 @@ class _SingleProgram extends State<SingleProgram> {
               ),
               GestureDetector(
                 onTap: () async {
-                  if (program.alreadyScheduled) return;
-                  bool result = await postOrder(program);
-                  if (result) {
-                    setState(() {
-                      program.alreadyScheduled = true;
-                    });
-                  } else {
-                    showAlertDialog(context,
-                        title: "Error", text: "Can not schedule the program");
-                  }
+                  if (program.alreadyScheduled || (program.alreadyScheduled && program.orderId == null)) return;
+
+                  !program.alreadyScheduled ? postOrder(program, context) : removeOrder(program.orderId!, context);
+
+                  setState(() {
+                    program.alreadyScheduled = !program.alreadyScheduled;
+                  });
                 },
                 child: Icon(
                   program.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
-                  color: Colors.black,
+                  color: program.alreadyScheduled && program.orderId == null ? Colors.grey : Colors.black,
                   size: 30,
                 ),
               ),

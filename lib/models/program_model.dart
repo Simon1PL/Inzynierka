@@ -1,4 +1,5 @@
 class ProgramModel {
+  int? orderId;
   String? channelName;
   String? channelId;
   DateTime? start;
@@ -24,7 +25,8 @@ class ProgramModel {
       String? recordSize,
       this.fileName,
       bool? favorite,
-      bool? alreadyScheduled)
+      bool? alreadyScheduled,
+      [this.orderId])
       : this.start = start != null
             ? new DateTime.fromMillisecondsSinceEpoch(start * 1000)
             : null,

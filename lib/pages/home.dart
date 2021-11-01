@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/services/tuner_service.dart';
 import 'package:projekt/widgets/app_bar.dart';
 import 'package:projekt/widgets/menu.dart';
 import 'package:projekt/widgets/section_title.dart';
@@ -24,10 +23,11 @@ class _HomeState extends State<Home> {
       appBar: MyAppBar(
         text: "R-M DVB-T Tuner",
       ),
-      body: Column(children: [
+      body: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         SectionTitle("Your recording list"),
         SectionTitle("Your scheduled favourites"),
         SectionTitle("Check this out"),
+        Text(""),
       ]),
       bottomNavigationBar: Menu(
         currentIndex: 0,
