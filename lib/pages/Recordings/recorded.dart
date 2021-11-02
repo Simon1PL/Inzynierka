@@ -3,8 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:projekt/models/program_model.dart';
 import 'package:projekt/services/favorite_service.dart';
 import 'package:projekt/services/programs_service.dart';
-import 'package:projekt/widgets/app_bar_buttons.dart';
-import 'package:projekt/widgets/loading_list.dart';
+import 'package:projekt/widgets/app_bar_with_buttons.dart';
+import 'package:projekt/widgets/program_list.dart';
 import 'package:projekt/widgets/menu.dart';
 
 class Recorded extends StatefulWidget {

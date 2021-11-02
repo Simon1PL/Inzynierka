@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/widgets/app_bar_buttons.dart';
+import 'package:projekt/widgets/app_bar_with_buttons.dart';
 import 'package:projekt/widgets/menu.dart';
 
 class Explore extends StatefulWidget {

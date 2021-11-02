@@ -53,7 +53,7 @@ class _SingleTunerState extends State<SingleTuner> {
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("Tuner name: " + tunerModel.name!),
+          child: Text("Tuner name: " + tunerModel.name),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -72,13 +72,13 @@ class _SingleTunerState extends State<SingleTuner> {
               return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(users[index].username!),
+                    Text(users[index].username),
                     Text("   Role: " +
                         TunerModel.getUserRoleAsString(users[index].userRole)),
                     if (tunerModel.currentUserRole == UserRoleForTuner.OWNER) IconButton(
                         onPressed: () {
                           removeUserFromTuner(
-                              users[index].username!, tunerModel.tunerId);
+                              users[index].username, tunerModel.tunerId);
                         },
                         icon: Icon(Icons.delete))
                   ]);

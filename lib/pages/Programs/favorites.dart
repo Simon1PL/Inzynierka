@@ -3,8 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:projekt/models/program_model.dart';
 import 'package:projekt/services/favorite_service.dart';
 import 'package:projekt/services/programs_service.dart';
-import 'package:projekt/widgets/app_bar_buttons.dart';
-import 'package:projekt/widgets/loading_list.dart';
+import 'package:projekt/widgets/app_bar_with_buttons.dart';
+import 'package:projekt/widgets/program_list.dart';
 import 'package:projekt/widgets/menu.dart';
 
 class Favorites extends StatefulWidget {
@@ -35,6 +35,7 @@ class _Programs extends State<Favorites> {
 
     List<ProgramModel>? recorded = await getRecorded();
     List<ProgramModel>? scheduled = await getScheduled();
+    List<ProgramModel>? epg = await getEpg();
     List<ProgramModel>? programsTmp = [];
     if (recorded != null) {
       programsTmp.addAll(recorded);
@@ -42,6 +43,10 @@ class _Programs extends State<Favorites> {
 
     if (scheduled != null) {
       programsTmp.addAll(scheduled);
+    }
+
+    if (epg != null) {
+      programsTmp.addAll(epg);
     }
 
     programsTmp = programsTmp
@@ -91,7 +96,7 @@ class _Programs extends State<Favorites> {
           ? Column(children: [
           ConstrainedBox(
             constraints: new BoxConstraints(
-              maxHeight: 400.0,
+              maxHeight: 500.0,
             ),
                 child: ProgramList(
                     programs, "Something goes wrong, can not get favorites"),

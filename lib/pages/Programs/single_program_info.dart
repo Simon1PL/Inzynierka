@@ -51,8 +51,8 @@ class _SingleProgram extends State<SingleProgram> {
               GestureDetector(
                 onTap: () {
                   !program.favorite
-                      ? addFavorite(program.title ?? "", context)
-                      : removeFavorite(program.title ?? "", context);
+                      ? addFavorite(program.title ?? "")
+                      : removeFavorite(program.title ?? "");
                   setState(() {
                     program.favorite = !program.favorite;
                   });
@@ -140,7 +140,7 @@ class _SingleProgram extends State<SingleProgram> {
           ),
         ],
       ),
-      bottomNavigationBar: Menu(currentIndex: 1),
+      bottomNavigationBar: Menu(),
     );
   }
 }

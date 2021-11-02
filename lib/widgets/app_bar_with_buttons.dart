@@ -3,29 +3,31 @@ import 'package:projekt/models/tuner_model.dart';
 import 'package:projekt/services/login_service.dart';
 import 'package:projekt/services/tuners_service.dart';
 
-class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final String text;
-  final bool showActions;
+class MyAppBarWithButtons extends StatefulWidget
+    implements PreferredSizeWidget {
+  final List<Widget> buttons;
+  late final isSelected;
 
-  MyAppBar({String text = "", bool showActions = true})
-      : this.text = text,
-        this.showActions = showActions;
+  MyAppBarWithButtons(List<Widget> buttons, int selectedTabIndex)
+      : this.buttons = buttons {
+    isSelected = new List.filled(buttons.length, false);
+    isSelected[selectedTabIndex] = true;
+  }
 
   @override
-  AppBarState createState() => AppBarState(text, showActions);
+  AppBarState createState() => AppBarState(buttons, isSelected);
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
-class AppBarState extends State<MyAppBar> {
-  final String text;
-  final bool showActions;
+class AppBarState extends State<MyAppBarWithButtons> {
+  final List<Widget> buttons;
+  List<bool> isSelected;
   String? tunerId;
   List<TunerModel> availableTuners = [];
 
-  AppBarState(this.text, this.showActions);
-
+  AppBarState(this.buttons, this.isSelected);
 
   Future<void> loadTuners() async {
     var tunerIdTmp = (await selectedTunerId).toString();
@@ -49,10 +51,28 @@ class AppBarState extends State<MyAppBar> {
       iconTheme: IconThemeData(
         color: Colors.black, //change your color here
       ),
-      title: Padding(
-        padding: EdgeInsets.only(left: 20.0),
-        child: Text(text, style: TextStyle(color: Colors.black)),
-      ),
+      title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        ToggleButtons(
+          color: Colors.black.withOpacity(0.60),
+          selectedColor: Colors.blue,
+          selectedBorderColor: Colors.blue,
+          fillColor: Colors.blue.withOpacity(0.08),
+          splashColor: Colors.blue.withOpacity(0.12),
+          hoverColor: Colors.blue.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(4.0),
+          constraints: BoxConstraints(minHeight: 36.0),
+          isSelected: isSelected,
+          onPressed: (index) {
+            var isSelectedTmp = List.filled(buttons.length, false);
+            isSelectedTmp[index] = true;
+
+            setState(() {
+              isSelected = isSelectedTmp;
+            });
+          },
+          children: buttons,
+        ),
+      ]),
       actions: [
         Padding(
           padding: EdgeInsets.only(right: 20.0),
@@ -88,8 +108,8 @@ class AppBarState extends State<MyAppBar> {
                             height: 2,
                             color: Colors.blue,
                           ),
-                          onChanged: (String? newValue) {
-                            setSelectedTunerId(newValue);
+                          onChanged: (String? newValue) async {
+                            await setSelectedTunerId(newValue);
                             setState(() {
                               tunerId = newValue;
                             });
@@ -102,7 +122,7 @@ class AppBarState extends State<MyAppBar> {
                               .toList(),
                         )),
                     PopupMenuItem(
-                      value: 1,
+                      value: 2,
                       child: Row(
                         children: [
                           Icon(Icons.logout),
@@ -115,6 +135,7 @@ class AppBarState extends State<MyAppBar> {
                   ]),
         ),
       ],
+      elevation: 0,
     );
   }
 }

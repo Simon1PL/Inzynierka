@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projekt/models/program_model.dart';
-import 'package:projekt/widgets/single_item_vertical_list.dart';
+import 'package:projekt/widgets/program_list_item.dart';
 
 class ProgramList extends StatefulWidget {
   final List<ProgramModel>? _list;
@@ -109,7 +109,7 @@ class ProgramListState extends State<ProgramList> {
                 shrinkWrap: true,
                 itemCount: _list!.length,
                 itemBuilder: (context, index) {
-                  return SingleItemVerticalList(ValueKey(_list![index]), _list![index]);
+                  return ProgramListItem(ValueKey(_list![index]), _list![index]);
                 }),
           ),
         ],

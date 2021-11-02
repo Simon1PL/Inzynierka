@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Menu extends StatefulWidget {
-  final int? currentIndex;
-  Menu({
-    int? currentIndex,
-  }): this.currentIndex = currentIndex;
-
-  @override
-  MenuState createState() => MenuState(currentIndex);
-}
-
-class MenuState extends State<Menu> {
+class Menu extends StatelessWidget {
   final List<String> routes = ["/home", "/recordings/scheduled", "/programs/tv_program"];
-  int currentIndex = 0;
-  bool noSelectedItem = true;
-  MenuState(int? currentIndex) {
+  late int currentIndex = 0;
+  late bool noSelectedItem = true;
+
+  Menu({int? currentIndex}) {
     if (currentIndex != null) {
       this.currentIndex = currentIndex;
       this.noSelectedItem = false;
@@ -24,7 +15,7 @@ class MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
           label: 'Home',

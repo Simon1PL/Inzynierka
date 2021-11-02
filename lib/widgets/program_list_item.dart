@@ -5,18 +5,18 @@ import 'package:projekt/pages/Programs/single_program_info.dart';
 import 'package:projekt/services/favorite_service.dart';
 import 'package:projekt/services/programs_service.dart';
 
-class SingleItemVerticalList extends StatefulWidget {
+class ProgramListItem extends StatefulWidget {
   final ProgramModel model;
 
-  SingleItemVerticalList(Key key, this.model) : super(key: key);
+  ProgramListItem(Key key, this.model) : super(key: key);
 
   @override
-  _SingleItemVerticalList createState() =>  _SingleItemVerticalList(model);
+  _ProgramListItem createState() =>  _ProgramListItem(model);
 }
 
-class _SingleItemVerticalList extends State<SingleItemVerticalList> {
+class _ProgramListItem extends State<ProgramListItem> {
   final ProgramModel model;
-  _SingleItemVerticalList(this.model);
+  _ProgramListItem(this.model);
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +69,16 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                       onTap: () async {
                         if (model.alreadyScheduled && model.orderId == null) return;
 
-                        !model.alreadyScheduled ? await postOrder(model, context) : removeOrder(model.orderId!, context);
-
-                        setState(() {
-                          model.alreadyScheduled = !model.alreadyScheduled;
-                        });
+                        if (model.alreadyScheduled && await removeOrder(model.orderId!, context)) {
+                          setState(() {
+                            model.alreadyScheduled = false;
+                          });
+                        }
+                        else if (!model.alreadyScheduled && await postOrder(model, context)) {
+                          setState(() {
+                            model.alreadyScheduled = true;
+                          });
+                        }
                       },
                       child: Icon(
                         model.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
@@ -118,7 +123,7 @@ class _SingleItemVerticalList extends State<SingleItemVerticalList> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        !model.favorite ? addFavorite(model.title ?? "", context) : removeFavorite(model.title ?? "", context);
+                        !model.favorite ? addFavorite(model.title ?? "") : removeFavorite(model.title ?? "");
                         setState(() {
                           model.favorite = !model.favorite;
                         });

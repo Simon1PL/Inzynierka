@@ -47,7 +47,7 @@ class _TunersState extends State<Tuners> {
                     return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text(tunerList[index].name!),
+                          Text(tunerList[index].name),
                           Text("   Role: " +
                               TunerModel.getUserRoleAsString(
                                   tunerList[index].currentUserRole)),
@@ -58,7 +58,7 @@ class _TunersState extends State<Tuners> {
                                     IconButton(
                                         onPressed: () async {
                                           await acceptTuner(tunerList[index].tunerId);
-                                          getTunersFromServer();
+                                          loadTunersFromServer();
                                           setState(() {
                                             tunerList[index].currentUserRole =
                                                 UserRoleForTuner.USER;
@@ -69,7 +69,7 @@ class _TunersState extends State<Tuners> {
                                         onPressed: () async {
                                           await declineTuner(
                                               tunerList[index].tunerId);
-                                          getTunersFromServer();
+                                          loadTunersFromServer();
                                           setState(() {
                                             tunerList.removeAt(index);
                                           });

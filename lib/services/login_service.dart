@@ -8,29 +8,29 @@ import 'package:projekt/services/globals.dart';
 import 'package:projekt/services/tuners_service.dart';
 import 'package:projekt/services/alert_service.dart';
 
-Future<void> logIn(BuildContext context, String username, String password) async {
+Future<void> logIn(String username, String password) async {
   await setUserCredential(username, password);
 
   try {
     Response response = await serverGet("login");
 
-    if (response.statusCode != 200) {
-      throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception(response.statusCode.toString() + " - " + utf8.decode(response.bodyBytes));
     }
 
     dynamic responseObject = jsonDecode(utf8.decode(response.bodyBytes));
     if (responseObject["status"]) {
       SharedPreferences pref = await SharedPreferences.getInstance();
       pref.setBool("isLoggedIn", true);
-      await getTunersFromServer();
-      (await tuners).isEmpty ? Navigator.pushNamedAndRemoveUntil(context, "/tuners", (route) => false) : Navigator.pushNamedAndRemoveUntil(context, Home.routeName, (route) => false);
+      await loadTunersFromServer();
+      (await tuners).isEmpty ? Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, "/tuners", (route) => false) : Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, Home.routeName, (route) => false);
     }
     else {
-      showAlertDialog(context, title: "Login failed", text: "Wrong username or password");
+      showAlert(title: "Login failed", text: "Wrong username or password");
     }
   }
   catch(e) {
-    showAlertDialog(context, title: "Error", text: e.toString());
+    showAlert(title: "Can't login", text: e.toString());
   }
 }
 
@@ -47,14 +47,14 @@ Future<bool> get isLoggedIn async {
   return pref.getBool("isLoggedIn") ?? false;
 }
 
-Future<void> register(BuildContext context, String username, String password) async {
+Future<void> register(String username, String password) async {
   await setUserCredential(username, password);
 
   try {
     Response response = await serverPost("register");
 
-    if (response.statusCode != 200) {
-      throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception(response.statusCode.toString() + " - " + utf8.decode(response.bodyBytes));
     }
 
     dynamic responseObject = jsonDecode(utf8.decode(response.bodyBytes));
@@ -62,13 +62,13 @@ Future<void> register(BuildContext context, String username, String password) as
       SharedPreferences pref = await SharedPreferences.getInstance();
       pref.setBool("isLoggedIn", true);
       await clearTuners();
-      Navigator.pushNamedAndRemoveUntil(context, "/tuners", (route) => false);
+      Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, "/tuners", (route) => false);
     }
     else {
-      showAlertDialog(context, title: "Register failed", text: responseObject["text"]);
+      showAlert(title: "Register failed", text: responseObject["text"]);
     }
   }
   catch(e) {
-    showAlertDialog(context, title: "Error", text: e.toString());
+    showAlert(title: "Can't register", text: e.toString());
   }
 }

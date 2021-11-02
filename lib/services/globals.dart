@@ -9,11 +9,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String _url = "http://localhost:5000";
 // String _url = "https://damp-springs-89170.herokuapp.com/";
+
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 Future<void> setUserCredential(String username, String password) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
-  pref.setString("basicAuth", 'Basic ' + base64Encode(utf8.encode('$username:$password')));
+  pref.setString(
+      "basicAuth", 'Basic ' + base64Encode(utf8.encode('$username:$password')));
 }
 
 Future<String> get _basicAuth async {
@@ -23,7 +25,8 @@ Future<String> get _basicAuth async {
 
 Future<Response> serverPost(String endpoint, [String body = ""]) async {
   Uri uri = Uri.parse('$_url/$endpoint');
-  var result = await post(uri, headers: <String, String>{'authorization': await _basicAuth}, body: body);
+  var result = await post(uri,
+      headers: <String, String>{'authorization': await _basicAuth}, body: body);
   if (result.statusCode == 401) {
     logOff();
   }
@@ -32,7 +35,8 @@ Future<Response> serverPost(String endpoint, [String body = ""]) async {
 
 Future<Response> serverDelete(String endpoint, [String body = ""]) async {
   Uri uri = Uri.parse('$_url/$endpoint');
-  var result = await delete(uri, headers: <String, String>{'authorization': await _basicAuth}, body: body);
+  var result = await delete(uri,
+      headers: <String, String>{'authorization': await _basicAuth}, body: body);
   if (result.statusCode == 401) {
     logOff();
   }
@@ -41,7 +45,8 @@ Future<Response> serverDelete(String endpoint, [String body = ""]) async {
 
 dynamic serverGet(String endpoint) async {
   Uri uri = Uri.parse('$_url/$endpoint');
-  var result = await get(uri, headers: <String, String>{'authorization': await _basicAuth});
+  var result = await get(uri,
+      headers: <String, String>{'authorization': await _basicAuth});
   if (result.statusCode == 401) {
     logOff();
   }

@@ -1,52 +1,57 @@
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:projekt/services/alert_service.dart';
 import 'dart:convert';
+import 'package:projekt/services/alert_service.dart';
 import 'package:projekt/services/globals.dart';
 
 Future<List<String>?> getFavorites() async {
-  try{
+  try {
     Response response = await serverGet("favorites");
-    if (response.statusCode != 200) {
-      throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception("Status code: " +
+          response.statusCode.toString() +
+          "\n" +
+          utf8.decode(response.bodyBytes));
     }
 
-    List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
+    List<dynamic> objects = response.bodyBytes.isNotEmpty
+        ? jsonDecode(utf8.decode(response.bodyBytes))
+        : response.bodyBytes;
     List<String> favorites = objects.map((p) => p[0].toString()).toList();
     return favorites;
-  }
-  catch (e) {
+  } catch (e) {
     print(e);
     return null;
   }
 }
 
-Future<bool> addFavorite(String favorite, BuildContext context) async {
-  try{
+Future<bool> addFavorite(String favorite) async {
+  try {
     Response response = await serverPost("favorites?name=" + favorite);
-    if (response.statusCode != 200) {
-      throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception(response.statusCode.toString() +
+          " - " +
+          utf8.decode(response.bodyBytes));
     }
 
     return true;
-  }
-  catch (e) {
-    showAlertDialog(context, title: "Error", text: e.toString());
+  } catch (e) {
+    showAlert(title: "Can't add favorite", text: e.toString());
     return false;
   }
 }
 
-Future<bool> removeFavorite(String favorite, BuildContext context) async {
-  try{
+Future<bool> removeFavorite(String favorite) async {
+  try {
     Response response = await serverDelete("favorites?name=" + favorite);
-    if (response.statusCode != 200) {
-      throw Exception("Status code: " + response.statusCode.toString() + "\n" + utf8.decode(response.bodyBytes));
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception(response.statusCode.toString() +
+          " - " +
+          utf8.decode(response.bodyBytes));
     }
 
     return true;
-  }
-  catch (e) {
-    showAlertDialog(context, title: "Error", text: e.toString());
+  } catch (e) {
+    showAlert(title: "Can't remove favorite", text: e.toString());
     return false;
   }
 }

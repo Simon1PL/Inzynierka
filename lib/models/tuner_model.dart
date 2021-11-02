@@ -2,14 +2,14 @@ import 'package:projekt/enums/user_role_for_tuner.dart';
 
 class TunerModel {
   int tunerId;
-  String? name;
-  UserRoleForTuner? currentUserRole;
+  String name;
+  late UserRoleForTuner currentUserRole;
 
-  TunerModel(this.tunerId, this.name, [String? currentUserRole]) {
+  TunerModel(this.tunerId, this.name, String currentUserRole) {
     this.currentUserRole = getUserRoleFromString(currentUserRole);
   }
 
-  static UserRoleForTuner? getUserRoleFromString(String? currentUserRole) {
+  static UserRoleForTuner getUserRoleFromString(String currentUserRole) {
     switch (currentUserRole) {
       case "owner":
       case "Owner":
@@ -23,10 +23,12 @@ class TunerModel {
       case "declined":
       case "Declined":
         return UserRoleForTuner.DECLINED;
+      default:
+        return UserRoleForTuner.UNKNOWN;
     }
   }
 
-  static String getUserRoleAsString(UserRoleForTuner? currentUserRole) {
+  static String getUserRoleAsString(UserRoleForTuner currentUserRole) {
     switch (currentUserRole) {
       case UserRoleForTuner.OWNER:
         return "Owner";
@@ -37,7 +39,7 @@ class TunerModel {
       case UserRoleForTuner.DECLINED:
         return "Declined";
       default:
-        return "";
+        return "Unknown";
     }
   }
 
@@ -51,10 +53,6 @@ class TunerModel {
   }
 
   factory TunerModel.fromJson(Map<String, dynamic> json) {
-    var tuner = TunerModel(-1, "");
-    tuner.tunerId = json["tunerId"];
-    tuner.name = json["name"];
-    tuner.currentUserRole = getUserRoleFromString(json["currentUserRole"]);
-    return tuner;
+    return TunerModel(json["tunerId"], json["name"], json["currentUserRole"]);
   }
 }

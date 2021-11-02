@@ -72,7 +72,7 @@ class _LoginState extends State<Login> {
                           margin: const EdgeInsets.only(top: 20.0),
                           child: TextField(
                             onSubmitted: (term) {
-                              logIn(context, _loginController.text,
+                              logIn(_loginController.text,
                                   _passwordController.text);
                             },
                             focusNode: passwordFocusNode,
@@ -102,7 +102,7 @@ class _LoginState extends State<Login> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            logIn(context, _loginController.text,
+                            logIn(_loginController.text,
                                 _passwordController.text);
                           },
                           child: Text(
@@ -119,7 +119,7 @@ class _LoginState extends State<Login> {
                             Text("Don't have an account? "),
                             OutlinedButton(
                               onPressed: () {
-                                register(context, _loginController.text,
+                                register(_loginController.text,
                                     _passwordController.text);
                               },
                               child: Text('REGISTER'),
