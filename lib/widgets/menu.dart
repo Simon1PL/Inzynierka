@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projekt/services/globals.dart';
 
 class Menu extends StatelessWidget {
   final List<String> routes = ["/home", "/recordings/scheduled", "/programs/tv_program"];
@@ -6,6 +7,20 @@ class Menu extends StatelessWidget {
   late bool noSelectedItem = true;
 
   Menu({int? currentIndex}) {
+    switch (currentIndex) {
+      case 0:
+        activeTab = "/home";
+        break;
+      case 1:
+        activeTab = "/recordings/scheduled";
+        break;
+      case 2:
+        activeTab = "/programs/tv_program";
+        break;
+      default:
+        activeTab = null;
+    }
+
     if (currentIndex != null) {
       this.currentIndex = currentIndex;
       this.noSelectedItem = false;

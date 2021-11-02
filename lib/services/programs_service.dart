@@ -56,7 +56,7 @@ Future<List<ProgramModel>?> getRecorded() async {
       dynamic object = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
       objects = [object];
     }
-    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channel_name"], p["channel_uuid"], p["start"], p["stop"], p["title"], p["subtitle"], p["summary"], p["description"], p["record_size"], p["file_name"], p["favorite"], true, p["order_id"])).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(p["channel_name"], p["channel_uuid"], p["start"], p["stop"], p["title"], p["subtitle"], p["summary"], p["description"], p["record_size"], p["file_name"], p["favorite"], true/*, p["order_id"]*/)).toList();
     return programs;
   }
   catch (e) {

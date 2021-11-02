@@ -12,6 +12,8 @@ String _url = "http://localhost:5000";
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
+String? activeTab;
+
 Future<void> setUserCredential(String username, String password) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   pref.setString(
