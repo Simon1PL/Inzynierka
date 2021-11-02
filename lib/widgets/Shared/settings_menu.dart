@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/services/login_service.dart';
-import 'package:projekt/widgets/tuner_dropdown.dart';
+import 'package:project/services/login_service.dart';
+import 'package:project/widgets/Shared/tuner_dropdown.dart';
 
 class SettingsMenu extends StatelessWidget {
 

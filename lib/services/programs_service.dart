@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'package:projekt/models/program_model.dart';
-import 'package:projekt/services/globals.dart';
-import 'package:projekt/services/tuners_service.dart';
+import 'package:project/models/program_model.dart';
+import 'package:project/services/globals.dart';
+import 'package:project/services/tuners_service.dart';
 
 import 'alert_service.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/services/tuners_service.dart';
-import 'package:projekt/widgets/app_bar.dart';
-import 'package:projekt/widgets/menu.dart';
+import 'package:project/services/tuners_service.dart';
+import 'package:project/widgets/Shared/app_bar.dart';
+import 'package:project/widgets/Shared/menu.dart';
 
 class AddTuner extends StatefulWidget {
   @override

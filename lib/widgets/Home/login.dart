@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:projekt/services/login_service.dart';
-import 'package:projekt/widgets/app_bar.dart';
+import 'package:project/services/login_service.dart';
+import 'package:project/widgets/Shared/app_bar.dart';
+import 'package:project/widgets/Shared/loader.dart';
 
 import 'home.dart';
 
@@ -14,9 +14,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _showPassword = false;
+  String? _passwordError, _loginError;
   final _loginController = TextEditingController();
   final _passwordController = TextEditingController();
-  late FocusNode passwordFocusNode = FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
 
   redirect() async {
     if (await isLoggedIn)
@@ -38,6 +39,40 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
+  bool _checkInputs() {
+    String? passwordError, loginError;
+
+    if (_loginController.text == "") {
+      loginError = 'Username can\'t be empty';
+    }
+
+    if (_passwordController.text == "") {
+        passwordError = 'Password can\'t be empty';
+    }
+
+    if (passwordError != null || loginError != null) {
+      setState(() {
+        _loginError = loginError;
+        _passwordError = passwordError;
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  void _login() {
+    if (!_checkInputs()) return;
+    logIn(_loginController.text,
+        _passwordController.text);
+  }
+
+  _register() {
+    if (!_checkInputs()) return;
+    logIn(_loginController.text,
+        _passwordController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -56,16 +91,20 @@ class _LoginState extends State<Login> {
                       children: [
                         TextField(
                           textInputAction: TextInputAction.next,
+                          onChanged: (text) => setState(() {
+                            _loginError = null;
+                          }),
                           onSubmitted: (term) {
                             passwordFocusNode.requestFocus();
                           },
                           controller: _loginController,
                           autofocus: true,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             filled: true,
                             border: InputBorder.none,
-                            labelText: "Login",
+                            labelText: "Username",
                             floatingLabelBehavior: FloatingLabelBehavior.auto,
+                            errorText: _loginError,
                           ),
                         ),
                         Container(
@@ -75,6 +114,9 @@ class _LoginState extends State<Login> {
                               logIn(_loginController.text,
                                   _passwordController.text);
                             },
+                            onChanged: (text) => setState(() {
+                              _passwordError = null;
+                            }),
                             focusNode: passwordFocusNode,
                             controller: _passwordController,
                             obscureText: !_showPassword,
@@ -85,6 +127,7 @@ class _LoginState extends State<Login> {
                               border: InputBorder.none,
                               labelText: "Password",
                               floatingLabelBehavior: FloatingLabelBehavior.auto,
+                              errorText: _passwordError,
                               suffixIcon: IconButton(
                                   icon: Icon(!_showPassword
                                       ? Icons.visibility
@@ -102,8 +145,7 @@ class _LoginState extends State<Login> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            logIn(_loginController.text,
-                                _passwordController.text);
+                            _login();
                           },
                           child: Text(
                             'LOGIN',
@@ -119,11 +161,11 @@ class _LoginState extends State<Login> {
                             Text("Don't have an account? "),
                             OutlinedButton(
                               onPressed: () {
-                                register(_loginController.text,
-                                    _passwordController.text);
+                                _register();
                               },
                               child: Text('REGISTER'),
                             ),
+                            Text(" instead."),
                           ],
                         ),
                         Container(
@@ -132,12 +174,7 @@ class _LoginState extends State<Login> {
                       ]),
                 ));
           } else {
-            return Center(
-              child: SpinKitFadingCircle(
-                color: Colors.grey[800],
-                size: 50,
-              ),
-            );
+            return Loader();
           }
         });
   }

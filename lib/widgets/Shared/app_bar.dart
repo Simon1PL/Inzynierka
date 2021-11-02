@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/widgets/settings_menu.dart';
+import 'package:project/widgets/Shared/settings_menu.dart';
 
-class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
+class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String text;
   final bool showActions;
 
@@ -10,22 +10,7 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
         this.showActions = showActions;
 
   @override
-  AppBarState createState() => AppBarState(text, showActions);
-
-  @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
-}
-
-class AppBarState extends State<MyAppBar> {
-  final String text;
-  final bool showActions;
-
-  AppBarState(this.text, this.showActions);
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +24,8 @@ class AppBarState extends State<MyAppBar> {
         child: Text(text, style: TextStyle(color: Colors.black)),
       ),
       actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 20.0),
-          child: SettingsMenu()
-        ),
+        if (showActions)
+          Padding(padding: EdgeInsets.only(right: 20.0), child: SettingsMenu()),
       ],
     );
   }

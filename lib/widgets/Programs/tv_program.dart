@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:projekt/models/program_model.dart';
-import 'package:projekt/services/favorite_service.dart';
-import 'package:projekt/services/programs_service.dart';
-import 'package:projekt/widgets/app_bar_with_buttons.dart';
-import 'package:projekt/widgets/program_list.dart';
-import 'package:projekt/widgets/menu.dart';
+import 'package:project/models/program_model.dart';
+import 'package:project/services/favorite_service.dart';
+import 'package:project/services/programs_service.dart';
+import 'package:project/widgets/Shared/app_bar_with_buttons.dart';
+import 'package:project/widgets/Programs/program_list.dart';
+import 'package:project/widgets/Shared/loader.dart';
+import 'package:project/widgets/Shared/menu.dart';
 
 class TvProgram extends StatefulWidget {
   @override
@@ -93,12 +93,7 @@ class _Programs extends State<TvProgram> {
       ], 1),
       body: dataLoaded
           ? ProgramList(programs, "Something goes wrong, can not get EPG")
-          : Center(
-              child: SpinKitFadingCircle(
-                color: Colors.grey[800],
-                size: 50,
-              ),
-            ),
+          : Loader(),
       bottomNavigationBar: Menu(currentIndex: 2),
     );
   }

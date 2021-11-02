@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:projekt/models/program_model.dart';
-import 'package:projekt/pages/Programs/single_program_info.dart';
-import 'package:projekt/services/favorite_service.dart';
-import 'package:projekt/services/programs_service.dart';
+import 'package:project/models/program_model.dart';
+import 'package:project/widgets/Programs/single_program_info.dart';
+import 'package:project/services/favorite_service.dart';
+import 'package:project/services/programs_service.dart';
 
 class ProgramListItem extends StatefulWidget {
   final ProgramModel model;

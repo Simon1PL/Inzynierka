@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/services/globals.dart';
+import 'package:project/services/globals.dart';
 
 class Menu extends StatelessWidget {
   final List<String> routes = ["/home", "/recordings/scheduled", "/programs/tv_program"];
-  late int currentIndex = 0;
-  late bool noSelectedItem = true;
+  late final int currentIndex;
+  late final bool noSelectedItem;
 
   Menu({int? currentIndex}) {
     switch (currentIndex) {
@@ -24,6 +24,10 @@ class Menu extends StatelessWidget {
     if (currentIndex != null) {
       this.currentIndex = currentIndex;
       this.noSelectedItem = false;
+    }
+    else {
+      this.currentIndex = 0;
+      this.noSelectedItem = true;
     }
   }
 

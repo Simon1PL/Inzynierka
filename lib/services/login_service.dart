@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:projekt/pages/home.dart';
-import 'package:projekt/pages/login.dart';
-import 'package:projekt/services/globals.dart';
-import 'package:projekt/services/tuners_service.dart';
-import 'package:projekt/services/alert_service.dart';
+import 'package:project/widgets/Home/home.dart';
+import 'package:project/widgets/Home/login.dart';
+import 'package:project/services/globals.dart';
+import 'package:project/services/tuners_service.dart';
+import 'package:project/services/alert_service.dart';
 
 Future<void> logIn(String username, String password) async {
   await setUserCredential(username, password);

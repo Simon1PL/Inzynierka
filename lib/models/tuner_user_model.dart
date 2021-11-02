@@ -1,5 +1,5 @@
-import 'package:projekt/enums/user_role_for_tuner.dart';
-import 'package:projekt/models/tuner_model.dart';
+import 'package:project/enums/user_role_for_tuner.dart';
+import 'package:project/models/tuner_model.dart';
 
 class TunerUserModel {
   int userId;

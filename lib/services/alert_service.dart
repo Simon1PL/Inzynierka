@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/services/globals.dart';
+import 'package:project/services/globals.dart';
 
 showSnackBar(String text) {
   ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(SnackBar(

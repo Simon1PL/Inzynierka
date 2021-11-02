@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/models/tuner_model.dart';
-import 'package:projekt/services/globals.dart';
-import 'package:projekt/services/tuners_service.dart';
+import 'package:project/models/tuner_model.dart';
+import 'package:project/services/globals.dart';
+import 'package:project/services/tuners_service.dart';
 
 class TunerDropdown extends StatefulWidget {
-  TunerDropdown();
-
   @override
   TunerDropdownState createState() => TunerDropdownState();
 }
@@ -13,8 +11,6 @@ class TunerDropdown extends StatefulWidget {
 class TunerDropdownState extends State<TunerDropdown> {
   String? tunerId;
   List<TunerModel> availableTuners = [];
-
-  TunerDropdownState();
 
   Future<void> loadTuners() async {
     var tunerIdTmp = (await selectedTunerId).toString();

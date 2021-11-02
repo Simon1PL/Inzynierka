@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/pages/Programs/favorites.dart';
-import 'package:projekt/pages/Programs/single_program_info.dart';
-import 'package:projekt/pages/Programs/tv_program.dart';
-import 'package:projekt/pages/Tuners/add_tuner.dart';
-import 'package:projekt/pages/login.dart';
-import 'package:projekt/services/globals.dart';
-import 'pages/Recordings/scheduled.dart';
-import 'pages/home.dart';
-import 'pages/Programs/explore.dart';
-import 'pages/Recordings/recorded.dart';
-import 'pages/Tuners/tuners.dart';
+import 'package:project/widgets/Programs/favorites.dart';
+import 'package:project/widgets/Programs/single_program_info.dart';
+import 'package:project/widgets/Programs/tv_program.dart';
+import 'package:project/widgets/Tuners/add_tuner.dart';
+import 'package:project/widgets/Home/login.dart';
+import 'package:project/services/globals.dart';
+import 'package:project/widgets/Recordings/scheduled.dart';
+import 'package:project/widgets/Home/home.dart';
+import 'package:project/widgets/Programs/explore.dart';
+import 'package:project/widgets/Recordings/recorded.dart';
+import 'package:project/widgets/Tuners/tuners.dart';
 
 Future<void> main() async => runApp(MaterialApp(
         navigatorKey: navigatorKey,

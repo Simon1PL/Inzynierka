@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
-import 'package:projekt/models/tuner_model.dart';
-import 'package:projekt/models/tuner_user_model.dart';
-import 'package:projekt/services/alert_service.dart';
-import 'package:projekt/services/globals.dart';
+import 'package:project/models/tuner_model.dart';
+import 'package:project/models/tuner_user_model.dart';
+import 'package:project/services/alert_service.dart';
+import 'package:project/services/globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<TunerModel>> get tuners async {

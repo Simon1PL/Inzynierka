@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:projekt/enums/user_role_for_tuner.dart';
-import 'package:projekt/models/tuner_model.dart';
-import 'package:projekt/pages/Tuners/single_tuner.dart';
-import 'package:projekt/services/tuners_service.dart';
-import 'package:projekt/widgets/app_bar.dart';
-import 'package:projekt/widgets/menu.dart';
+import 'package:project/enums/user_role_for_tuner.dart';
+import 'package:project/models/tuner_model.dart';
+import 'package:project/widgets/Shared/loader.dart';
+import 'package:project/widgets/Tuners/single_tuner.dart';
+import 'package:project/services/tuners_service.dart';
+import 'package:project/widgets/Shared/app_bar.dart';
+import 'package:project/widgets/Shared/menu.dart';
 
 class Tuners extends StatefulWidget {
   @override
@@ -99,12 +99,7 @@ class _TunersState extends State<Tuners> {
                 ),
               ),
             ])
-          : Center(
-              child: SpinKitFadingCircle(
-                color: Colors.grey[800],
-                size: 50,
-              ),
-            ),
+          : Loader(),
       bottomNavigationBar: Menu(),
     );
   }

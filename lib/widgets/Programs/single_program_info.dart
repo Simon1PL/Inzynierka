@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:projekt/models/program_model.dart';
-import 'package:projekt/services/favorite_service.dart';
-import 'package:projekt/services/programs_service.dart';
-import 'package:projekt/widgets/app_bar.dart';
-import 'package:projekt/widgets/menu.dart';
+import 'package:project/models/program_model.dart';
+import 'package:project/services/favorite_service.dart';
+import 'package:project/services/programs_service.dart';
+import 'package:project/widgets/Shared/app_bar.dart';
+import 'package:project/widgets/Shared/menu.dart';
 
 class SingleProgram extends StatefulWidget {
   static const String routeName = '/programs/program_info';

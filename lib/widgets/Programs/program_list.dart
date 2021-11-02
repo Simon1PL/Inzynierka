@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/models/program_model.dart';
-import 'package:projekt/widgets/program_list_item.dart';
+import 'package:project/models/program_model.dart';
+import 'package:project/widgets/Programs/program_list_item.dart';
 
 class ProgramList extends StatefulWidget {
   final List<ProgramModel>? _list;

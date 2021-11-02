@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/widgets/settings_menu.dart';
+import 'package:project/widgets/Shared/settings_menu.dart';
 
 class MyAppBarWithButtons extends StatefulWidget
     implements PreferredSizeWidget {
@@ -23,11 +23,6 @@ class AppBarState extends State<MyAppBarWithButtons> {
   List<bool> isSelected;
 
   AppBarState(this.buttons, this.isSelected);
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

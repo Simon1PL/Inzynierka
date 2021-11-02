@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'package:projekt/services/alert_service.dart';
-import 'package:projekt/services/globals.dart';
+import 'package:project/services/alert_service.dart';
+import 'package:project/services/globals.dart';
 
 Future<List<String>?> getFavorites() async {
   try {

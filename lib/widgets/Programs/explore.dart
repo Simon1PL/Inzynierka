@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/widgets/app_bar_with_buttons.dart';
-import 'package:projekt/widgets/menu.dart';
+import 'package:project/widgets/Shared/app_bar_with_buttons.dart';
+import 'package:project/widgets/Shared/menu.dart';
 
 class Explore extends StatefulWidget {
   @override

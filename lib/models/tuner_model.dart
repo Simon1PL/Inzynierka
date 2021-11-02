@@ -1,4 +1,4 @@
-import 'package:projekt/enums/user_role_for_tuner.dart';
+import 'package:project/enums/user_role_for_tuner.dart';
 
 class TunerModel {
   int tunerId;

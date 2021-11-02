@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projekt/widgets/app_bar.dart';
-import 'package:projekt/widgets/menu.dart';
-import 'package:projekt/widgets/section_title.dart';
+import 'package:project/widgets/Shared/app_bar.dart';
+import 'package:project/widgets/Shared/menu.dart';
+import 'package:project/widgets/Home/section_title.dart';
 
 class Home extends StatefulWidget {
   static const String routeName = '/home';
