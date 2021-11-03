@@ -1,0 +1,4 @@
+enum FavoriteType {
+  TITLE,
+  EPISODE,
+}

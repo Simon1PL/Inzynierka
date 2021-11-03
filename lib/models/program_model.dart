@@ -11,9 +11,10 @@ class ProgramModel {
   int? recordSize;
   String? fileName;
   bool favorite;
+  bool favorite2;
   bool alreadyScheduled;
 
-  ProgramModel(
+  ProgramModel({
       this.channelName,
       this.channelId,
       int? start,
@@ -22,11 +23,12 @@ class ProgramModel {
       this.subtitle,
       this.summary,
       this.description,
-      int? recordSize,
+      this.recordSize,
       this.fileName,
       bool? favorite,
+      bool? favorite2,
       bool? alreadyScheduled,
-      [this.orderId])
+      this.orderId})
       : this.start = start != null
             ? new DateTime.fromMillisecondsSinceEpoch(start * 1000)
             : null,
@@ -34,6 +36,7 @@ class ProgramModel {
             ? new DateTime.fromMillisecondsSinceEpoch(stop * 1000)
             : null,
         this.favorite = favorite != null ? favorite : false,
+        this.favorite2 = favorite2 != null ? favorite2 : false,
         this.alreadyScheduled =
             alreadyScheduled != null ? alreadyScheduled : false;
 }

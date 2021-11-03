@@ -17,6 +17,13 @@ class _Programs extends State<TvProgram> {
   bool dataLoaded = false;
 
   @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     loadEpg();
@@ -32,14 +39,7 @@ class _Programs extends State<TvProgram> {
       return;
     }
 
-    List<String>? favorites = await getFavorites();
-    if (favorites != null) {
-      programsTmp
-          .where((element) => favorites.contains(element.title))
-          .forEach((element) {
-        element.favorite = true;
-      });
-    }
+    programsTmp = await fillFavoritesDataInProgramList(programsTmp);
 
     List<ProgramModel>? recorded = await getRecorded();
     List<ProgramModel>? scheduled = await getScheduled();
@@ -53,10 +53,11 @@ class _Programs extends State<TvProgram> {
     }
 
     programsTmp
-        .where((element) => alreadySaved.any((e) => e.title == element.title))
         .forEach((element) {
-          element.alreadyScheduled = true;
-          element.orderId = alreadySaved.firstWhere((e) => e.title == element.title).orderId;
+          if (alreadySaved.any((e) => e.title == element.title)) {
+            element.alreadyScheduled = true;
+            element.orderId = alreadySaved.firstWhere((e) => e.title == element.title).orderId;
+          }
         });
 
     setState(() {

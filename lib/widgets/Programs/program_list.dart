@@ -104,13 +104,16 @@ class ProgramListState extends State<ProgramList> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: _list!.length,
-                itemBuilder: (context, index) {
-                  return ProgramListItem(ValueKey(_list![index]), _list![index]);
-                }),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 5.0),
+              child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: _list!.length,
+                  itemBuilder: (context, index) {
+                    return ProgramListItem(ValueKey(_list![index]), _list![index]);
+                  }),
+            ),
           ),
         ],
       );

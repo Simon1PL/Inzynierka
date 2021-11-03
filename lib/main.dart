@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/widgets/Programs/favorites.dart';
+import 'package:project/widgets/Favorites/favorites.dart';
 import 'package:project/widgets/Programs/single_program_info.dart';
 import 'package:project/widgets/Programs/tv_program.dart';
 import 'package:project/widgets/Tuners/add_tuner.dart';

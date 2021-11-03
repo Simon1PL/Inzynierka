@@ -32,12 +32,7 @@ class _Recordings extends State<Recorded> {
       return;
     }
 
-    List<String>? favorites = await getFavorites();
-    if (favorites != null) {
-      programsTmp
-          .where((element) => favorites.contains(element.title))
-          .forEach((element) => element.favorite = true);
-    }
+    programsTmp = await fillFavoritesDataInProgramList(programsTmp);
 
     setState(() {
       this.programs = programsTmp;
