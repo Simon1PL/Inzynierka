@@ -108,7 +108,7 @@ class _ProgramListItem extends State<ProgramListItem> {
                         Icon(Icons.folder),
                         Padding(padding: EdgeInsets.only(right: 5.0)),
                         Text(
-                          model.fileName! + " (" + (model.recordSize!/1024).toStringAsFixed(2) + "MB)",
+                          model.fileName! + " (" + (model.recordSize!/1024/1024).toStringAsFixed(2) + "MB)",
                           style: TextStyle(
                             fontSize: 18.5,
                             fontWeight: FontWeight.w600,

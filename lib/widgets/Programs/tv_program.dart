@@ -6,6 +6,7 @@ import 'package:project/widgets/Shared/app_bar_with_buttons.dart';
 import 'package:project/widgets/Programs/program_list.dart';
 import 'package:project/widgets/Shared/loader.dart';
 import 'package:project/widgets/Shared/menu.dart';
+import 'package:collection/collection.dart';
 
 class TvProgram extends StatefulWidget {
   @override
@@ -53,12 +54,16 @@ class _Programs extends State<TvProgram> {
     }
 
     programsTmp
-        .forEach((element) {
-          if (alreadySaved.any((e) => e.title == element.title)) {
-            element.alreadyScheduled = true;
-            element.orderId = alreadySaved.firstWhere((e) => e.title == element.title).orderId;
-          }
-        });
+      .forEach((element) {
+        var program = alreadySaved.firstWhereOrNull((e) => e.title == element.title);
+
+        if (program != null) {
+          element.alreadyScheduled = true;
+          element.orderId = program.orderId;
+          element.fileName = program.fileName;
+          element.recordSize = program.recordSize;
+        }
+      });
 
     setState(() {
       this.programs = programsTmp;

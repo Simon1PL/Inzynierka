@@ -15,7 +15,7 @@ Future<List<ProgramModel>?> getEpg() async {
     }
 
     List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
-    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_uuid"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"])).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_uuid"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], genreInt: p["genre"] == null ? [] : p["genre"].cast<int>(), channelNumber: p["channel_number"])).toList();
     return programs;
   }
   catch (e) {
@@ -32,7 +32,7 @@ Future<List<ProgramModel>?> getScheduled() async {
     }
 
     List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
-    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_id"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], recordSize: p["record_size"], fileName: p["file_name"], alreadyScheduled: true, orderId: p["order_id"])).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_id"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], recordSize: p["record_size"], fileName: p["file_name"], alreadyScheduled: true, orderId: p["order_id"], genreInt: p["genre"] == null ? [] : p["genre"].cast<int>(), channelNumber: p["channel_number"].toString())).toList();
     return programs;
   }
   catch (e) {
@@ -56,7 +56,7 @@ Future<List<ProgramModel>?> getRecorded() async {
       dynamic object = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
       objects = [object];
     }
-    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_uuid"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], recordSize: p["record_size"], fileName: p["file_name"], alreadyScheduled: true, orderId: null/*, p["order_id"]*/)).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_uuid"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], recordSize: p["record_size"], fileName: p["file_name"], alreadyScheduled: true, orderId: null/*, p["order_id"]*/, genreInt: p["genre"] == null ? [] : p["genre"].cast<int>(), channelNumber: p["channel_number"].toString())).toList();
     return programs;
   }
   catch (e) {

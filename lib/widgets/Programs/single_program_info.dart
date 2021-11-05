@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:project/enums/favorite_type.dart';
 import 'package:project/models/program_model.dart';
 import 'package:project/services/favorite_service.dart';
 import 'package:project/services/programs_service.dart';
@@ -16,7 +17,7 @@ class SingleProgram extends StatefulWidget {
 class _SingleProgram extends State<SingleProgram> {
   @override
   Widget build(BuildContext context) {
-    final ProgramModel program =
+    ProgramModel program =
         ModalRoute.of(context)!.settings.arguments as ProgramModel;
 
     return Scaffold(
@@ -24,121 +25,210 @@ class _SingleProgram extends State<SingleProgram> {
       appBar: MyAppBar(
         text: "",
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left:
-                          40 /*it has to be equal to favorite icon size + right padding to be in center*/,
-                      right: 10,
-                      bottom: 12.0),
-                  child: Text(
-                    program.title != null ? program.title! : "No title!",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  !program.favorite
-                      ? addFavorite(program.title ?? "")
-                      : removeFavorite(program.title ?? "");
-                  setState(() {
-                    program.favorite = !program.favorite;
-                  });
-                },
-                child: Icon(
-                  program.favorite ? Icons.favorite : Icons.favorite_border,
-                  color: Colors.black,
-                  size: 30,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(20),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: program.favorite2
+                    ? Colors.blue.withOpacity(0.5)
+                    : Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 1,
+                offset: Offset(0, 0), // changes position of shadow
               ),
             ],
           ),
-          Text(
-            program.subtitle == null ? "" : program.subtitle!,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
-              height: 200,
-              child: Text(
-                program.description == null
-                    ? "sorry, we have no description for this program"
-                    : program.description!,
-                style: TextStyle(
-                  fontSize: 17,
-                ),
-              ),
-            ),
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                flex: 1,
-                child: Column(
-                  children: [
-                    Text(
-                      program.channelName != null ? program.channelName! : "",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(22, 15, 22, 15),
+            child: SizedBox.expand(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left:
+                                  40 /*it has to be equal to favorite icon size + right padding to be in center*/,
+                              right: 10,
+                              bottom: 12.0),
+                          child: Text(
+                            program.title != null
+                                ? program.title!
+                                : "No title!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    Text(
-                      program.start != null && program.stop != null
-                          ? DateFormat("dd.MM.yyyy HH:mm")
-                                  .format(program.start!) +
-                              " - " +
-                              DateFormat.Hm().format(program.stop!)
-                          : "",
+                      GestureDetector(
+                        onTap: () async {
+                          if (!program.favorite) {
+                            var res = await addFavorite(program.title ?? "");
+                            if (res == FavoriteType.EPISODE)
+                              setState(() {
+                                program.favorite = true;
+                              });
+                            else if(res == FavoriteType.TITLE) {
+                              setState(() {
+                                program.favorite2 = true;
+                              });
+                            }
+                          } else {
+                            if (await removeFavorite(program.title ?? ""))
+                              setState(() {
+                                program.favorite = false;
+                              });
+                          }
+                        },
+                        child: Icon(
+                          program.favorite ? Icons.favorite : Icons.favorite_border,
+                          size: 30,
+                          color: program.favorite ? Colors.blue : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Center(
+                    child: Text(
+                      program.subtitle == null ? "" : program.subtitle!,
                       style: TextStyle(
                         fontSize: 17,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  if (program.alreadyScheduled && program.orderId == null)
-                    return;
+                  ),
+                  Center(
+                    child: Text(
+                      program.summary == null ? "" : program.summary!,
+                      style: TextStyle(
+                        fontSize: 17,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    program.genre.length > 0 ? "Genre: " + program.genre.join(", ") : "",
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                  program.fileName != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 15.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Downloaded file: ",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                              Icon(Icons.folder),
+                              Text(
+                                program.fileName! +
+                                    " (" +
+                                    (program.recordSize! / 1024 / 1024)
+                                        .toStringAsFixed(2) +
+                                    "MB)",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Text(""),
+                  Text(
+                    "Description: " +
+                        (program.description == null
+                            ? "Sorry, we have no description for this program"
+                            : program.description!),
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                  Text(
+                    "Channel: " +
+                        (program.channelName != null
+                            ? program.channelName!
+                            : "") +
+                        (program.channelNumber != null
+                            ? " (" + program.channelNumber! + ")"
+                            : ""),
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                  Text(
+                    "Date: " +
+                        (program.start != null && program.stop != null
+                            ? DateFormat("dd.MM.yyyy").format(program.start!)
+                            : ""),
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.access_time_filled),
+                          Padding(padding: EdgeInsets.only(right: 5)),
+                          Text(
+                            program.start != null && program.stop != null
+                                ? DateFormat.Hm().format(program.start!) +
+                                    " - " +
+                                    DateFormat.Hm().format(program.stop!)
+                                : "",
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                        ],
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          if (program.alreadyScheduled && program.orderId == null) return;
 
-                  !program.alreadyScheduled
-                      ? await postOrder(program, context)
-                      : removeOrder(program.orderId!, context);
-
-                  setState(() {
-                    program.alreadyScheduled = !program.alreadyScheduled;
-                  });
-                },
-                child: Icon(
-                  program.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
-                  color: program.alreadyScheduled && program.orderId == null
-                      ? Colors.grey
-                      : Colors.black,
-                  size: 30,
-                ),
+                          if (program.alreadyScheduled && await removeOrder(program.orderId!, context)) {
+                            setState(() {
+                              program.alreadyScheduled = false;
+                            });
+                          }
+                          else if (!program.alreadyScheduled && await postOrder(program, context)) {
+                            setState(() {
+                              program.alreadyScheduled = true;
+                            });
+                          }
+                        },
+                        child: Icon(
+                          program.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
+                          color: (program.alreadyScheduled && program.orderId == null) || program.start == null ? Colors.grey : program.alreadyScheduled ? Colors.blue : Colors.black,
+                          size: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ],
+        ),
       ),
       bottomNavigationBar: Menu(),
     );
