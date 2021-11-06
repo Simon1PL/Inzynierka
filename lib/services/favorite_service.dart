@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:project/services/alert_service.dart';
 import 'package:project/services/globals.dart';
 import 'package:project/widgets/Shared/favoriteAlert.dart';
+import "package:collection/collection.dart";
 
 Future<List<List<String>?>> getFavorites() async {
   try {
@@ -20,8 +21,11 @@ Future<List<List<String>?>> getFavorites() async {
     List<dynamic> objects = response.bodyBytes.isNotEmpty
         ? jsonDecode(utf8.decode(response.bodyBytes))
         : response.bodyBytes;
-    List<String> favorites = objects.map((p) => p[0].toString()).toList();
-    return [favorites, favorites];
+    List<List<dynamic>> favorites = objects.map((p) => List<dynamic>.from(p)).toList();
+    Map<dynamic, List<List>> favoritesMap = groupBy(favorites, (List<dynamic> obj) => obj[1]);
+    var favTitles = favoritesMap[FavoriteType.TITLE.index]?.map((e) => e[0].toString()).toList() ?? [];
+    var favEpisodes = favoritesMap[FavoriteType.EPISODE.index]?.map((e) => e[0].toString()).toList() ?? [];
+    return [favEpisodes, favTitles];
   } catch (e) {
     print(e);
     return [null, null];
@@ -38,7 +42,7 @@ Future<FavoriteType?> addFavorite(String favorite, [FavoriteType? favoriteType])
       favoriteType = FavoriteType.EPISODE;
     }
 
-    Response response = await serverPost("favorites?name=" + favorite);
+    Response response = await serverPost("favorites?name=" + favorite + "&series=" + favoriteType.index.toString());
     if (response.statusCode != 200 && response.statusCode != 201) {
       if (response.statusCode == 400 &&
           response.bodyBytes.contains("already added")) {
@@ -66,7 +70,7 @@ Future<FavoriteType?> addFavorite(String favorite, [FavoriteType? favoriteType])
 
 Future<bool> removeFavorite(String favorite, [FavoriteType favoriteType = FavoriteType.EPISODE]) async {
   try {
-    Response response = await serverDelete("favorites?name=" + favorite);
+    Response response = await serverDelete("favorites?name=" + favorite + "&series=" + favoriteType.index.toString());
     if (response.statusCode != 200 && response.statusCode != 201) {
       throw Exception(response.statusCode.toString() +
           " - " +
@@ -108,7 +112,7 @@ Future<List<ProgramModel>> fillFavoritesDataInProgramList(List<ProgramModel> lis
   List<String>? favorites2 = tmp[1];
   if (favorites2 != null) {
     list.forEach((element) {
-      if (element.title != null && favorites2.any((e) => element.title!.contains(e)))
+      if (element.title != null && favorites2.any((e) => element.title!.toLowerCase().contains(e.toLowerCase())))
         element.favorite2 = true;
     });
   }

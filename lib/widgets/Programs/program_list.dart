@@ -17,6 +17,7 @@ class ProgramListState extends State<ProgramList> {
   List<ProgramModel>? _list, _notFilteredList;
   final String _errorText;
   final _searchController = TextEditingController();
+  final _controller = ScrollController();
 
   ProgramListState(this._list, this._errorText) {
     if (_list != null) {
@@ -26,6 +27,12 @@ class ProgramListState extends State<ProgramList> {
 
   void search() {
     if (this._notFilteredList == null) return;
+
+    _controller.animateTo(
+      0.0,
+      duration: Duration(seconds: 1),
+      curve: Curves.fastOutSlowIn,
+    );
 
     var searchedText = _searchController.text.toLowerCase();
     var searchByTitle = this
@@ -107,6 +114,7 @@ class ProgramListState extends State<ProgramList> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 5.0),
               child: ListView.builder(
+                controller: _controller,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: _list!.length,

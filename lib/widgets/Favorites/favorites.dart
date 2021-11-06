@@ -66,7 +66,7 @@ class _Programs extends State<Favorites> {
     var favoritePrograms = favorites.map((e) {
       var program = programsTmp.firstWhere((element) => element.title == e, orElse: () => ProgramModel(title: e));
       program.favorite = true;
-      program.favorite2 = favorites2.any((e) => program.title!.contains(e));
+      program.favorite2 = favorites2.any((e) => program.title!.toLowerCase().contains(e.toLowerCase()));
       return program;
     }).toList();
 
