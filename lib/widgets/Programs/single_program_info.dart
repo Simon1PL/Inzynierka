@@ -46,224 +46,248 @@ class _SingleProgram extends State<SingleProgram> {
           ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(22, 15, 22, 15),
-            child: SizedBox.expand(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            child: Stack(
+              children: [
+                SizedBox.expand(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              left:
-                                  40 /*it has to be equal to favorite icon size + right padding to be in center*/,
-                              right: 10,
-                              bottom: 12.0),
-                          child: Text(
-                            program.title != null
-                                ? program.title!
-                                : "No title!",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          if (!program.favorite) {
-                            var res = await addFavorite(program.title ?? "");
-                            if (res == FavoriteType.EPISODE)
-                              setState(() {
-                                program.favorite = true;
-                              });
-                            else if (res == FavoriteType.TITLE) {
-                              setState(() {
-                                program.favorite2 = true;
-                              });
-                            }
-                          } else {
-                            if (await removeFavorite(program.title ?? ""))
-                              setState(() {
-                                program.favorite = false;
-                              });
-                          }
-                        },
-                        child: Icon(
-                          program.favorite
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          size: 30,
-                          color: program.favorite ? Colors.blue : Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  program.subtitle != null
-                      ? Center(
-                          child: Text(
-                            program.subtitle!,
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                        )
-                      : SizedBox.shrink(),
-                  program.summary == null || program.summary == program.subtitle
-                      ? SizedBox.shrink()
-                      : Padding(
-                        padding: const EdgeInsets.only(top: 3.0),
-                        child: Text(
-                            "Summary: " + program.summary!,
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                      ),
-                  program.genre.length > 0
-                      ? Padding(
-                    padding: const EdgeInsets.only(top: 3.0),
-                        child: Text(
-                            "Genre: " + program.genre.join(", "),
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                      )
-                      : SizedBox.shrink(),
-                  program.fileName != null
-                      ? Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Downloaded file: ",
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left:
+                                      40 /*it has to be equal to favorite icon size + right padding to be in center*/,
+                                  right: 10,
+                                  bottom: 12.0),
+                              child: Text(
+                                program.title != null
+                                    ? program.title!
+                                    : "No title!",
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 17,
-                                ),
-                              ),
-                              Icon(Icons.folder),
-                              Text(
-                                program.fileName! +
-                                    " (" +
-                                    (program.recordSize! / 1024 / 1024)
-                                        .toStringAsFixed(2) +
-                                    "MB)",
-                                style: TextStyle(
-                                  fontSize: 17,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ],
-                          ),
-                        )
-                      : SizedBox.shrink(),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 3.0),
-                        child: Text(
-                          "Description: " +
-                              (program.description == null
-                                  ? "Sorry, we have no description for this program"
-                                  : program.description!),
-                          style: TextStyle(
-                            fontSize: 17,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 3.0),
-                    child: Text(
-                      "Channel: " +
-                          (program.channelName != null
-                              ? program.channelName!
-                              : "") +
-                          (program.channelNumber != null
-                              ? " (" + program.channelNumber! + ")"
-                              : "-"),
-                      style: TextStyle(
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 3.0),
-                    child: Text(
-                      "Date: " +
-                          (program.start != null && program.stop != null
-                              ? DateFormat("dd.MM.yyyy").format(program.start!)
-                              : "-"),
-                      style: TextStyle(
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.access_time_filled),
-                            Padding(padding: EdgeInsets.only(right: 5)),
-                            Text(
-                              program.start != null && program.stop != null
-                                  ? DateFormat.Hm().format(program.start!) +
-                                      " - " +
-                                      DateFormat.Hm().format(program.stop!)
-                                  : "00:00 - 00:00",
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              if (!program.favorite) {
+                                var res =
+                                    await addFavorite(program.title ?? "");
+                                if (res == FavoriteType.EPISODE)
+                                  setState(() {
+                                    program.favorite = true;
+                                  });
+                                else if (res == FavoriteType.TITLE) {
+                                  setState(() {
+                                    program.favorite2 = true;
+                                  });
+                                }
+                              } else {
+                                if (await removeFavorite(program.title ?? ""))
+                                  setState(() {
+                                    program.favorite = false;
+                                  });
+                              }
+                            },
+                            child: Icon(
+                              program.favorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 30,
+                              color:
+                                  program.favorite ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                        ],
                       ),
-                      GestureDetector(
-                        onTap: () async {
-                          if (program.alreadyScheduled &&
-                              program.orderId == null) return;
-
-                          if (program.alreadyScheduled &&
-                              await removeOrder(program.orderId!, context)) {
-                            setState(() {
-                              program.alreadyScheduled = false;
-                            });
-                          } else if (!program.alreadyScheduled &&
-                              await postOrder(program, context)) {
-                            setState(() {
-                              program.alreadyScheduled = true;
-                            });
-                          }
-                        },
-                        child: Icon(
-                          program.alreadyScheduled
-                              ? Icons.alarm_off
-                              : Icons.alarm,
-                          color: (program.alreadyScheduled &&
-                                      program.orderId == null) ||
-                                  program.start == null
-                              ? Colors.grey
-                              : program.alreadyScheduled
-                                  ? Colors.blue
-                                  : Colors.black,
-                          size: 30,
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                program.subtitle != null
+                                    ? Center(
+                                        child: Text(
+                                          program.subtitle!,
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox.shrink(),
+                                program.summary == null ||
+                                        program.summary == program.subtitle
+                                    ? SizedBox.shrink()
+                                    : Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Text(
+                                          "Summary: " + program.summary!,
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                          ),
+                                        ),
+                                      ),
+                                program.genre.length > 0
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Text(
+                                          "Genre: " + program.genre.join(", "),
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox.shrink(),
+                                program.fileName != null
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Wrap(
+                                          children: [
+                                            Text(
+                                              "Downloaded file: ",
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                            Wrap(
+                                              children: [
+                                                Icon(Icons.folder),
+                                                Text(
+                                                  program.fileName! +
+                                                      " (" +
+                                                      (program.recordSize! /
+                                                          1024 /
+                                                          1024)
+                                                          .toStringAsFixed(2) +
+                                                      "MB)",
+                                                  style: TextStyle(
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : SizedBox.shrink(),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    "Description: " +
+                                        (program.description == null
+                                            ? "Sorry, we have no description for this program"
+                                            : program.description!),
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    "Channel: " +
+                                        (program.channelName != null
+                                            ? program.channelName!
+                                            : "") +
+                                        (program.channelNumber != null
+                                            ? " (" +
+                                                program.channelNumber! +
+                                                ")"
+                                            : "-"),
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    "Date: " +
+                                        (program.start != null &&
+                                                program.stop != null
+                                            ? DateFormat("dd.MM.yyyy")
+                                                .format(program.start!)
+                                            : "-"),
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.access_time_filled),
+                                      Padding(
+                                          padding: EdgeInsets.only(right: 5)),
+                                      Text(
+                                        program.start != null &&
+                                                program.stop != null
+                                            ? DateFormat.Hm()
+                                                    .format(program.start!) +
+                                                " - " +
+                                                DateFormat.Hm()
+                                                    .format(program.stop!)
+                                            : "00:00 - 00:00",
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () async {
+                      if (program.alreadyScheduled && program.orderId == null)
+                        return;
+
+                      if (program.alreadyScheduled &&
+                          await removeOrder(program.orderId!, context)) {
+                        setState(() {
+                          program.alreadyScheduled = false;
+                        });
+                      } else if (!program.alreadyScheduled &&
+                          await postOrder(program, context)) {
+                        setState(() {
+                          program.alreadyScheduled = true;
+                        });
+                      }
+                    },
+                    child: Icon(
+                      program.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
+                      color: (program.alreadyScheduled &&
+                                  program.orderId == null) ||
+                              program.start == null
+                          ? Colors.grey
+                          : program.alreadyScheduled
+                              ? Colors.blue
+                              : Colors.black,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

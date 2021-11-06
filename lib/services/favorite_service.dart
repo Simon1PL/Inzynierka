@@ -21,10 +21,18 @@ Future<List<List<String>?>> getFavorites() async {
     List<dynamic> objects = response.bodyBytes.isNotEmpty
         ? jsonDecode(utf8.decode(response.bodyBytes))
         : response.bodyBytes;
-    List<List<dynamic>> favorites = objects.map((p) => List<dynamic>.from(p)).toList();
-    Map<dynamic, List<List>> favoritesMap = groupBy(favorites, (List<dynamic> obj) => obj[1]);
-    var favTitles = favoritesMap[FavoriteType.TITLE.index]?.map((e) => e[0].toString()).toList() ?? [];
-    var favEpisodes = favoritesMap[FavoriteType.EPISODE.index]?.map((e) => e[0].toString()).toList() ?? [];
+    List<List<dynamic>> favorites =
+        objects.map((p) => List<dynamic>.from(p)).toList();
+    Map<dynamic, List<List>> favoritesMap =
+        groupBy(favorites, (List<dynamic> obj) => obj[1]);
+    var favTitles = favoritesMap[FavoriteType.TITLE.index]
+            ?.map((e) => e[0].toString())
+            .toList() ??
+        [];
+    var favEpisodes = favoritesMap[FavoriteType.EPISODE.index]
+            ?.map((e) => e[0].toString())
+            .toList() ??
+        [];
     return [favEpisodes, favTitles];
   } catch (e) {
     print(e);
@@ -32,7 +40,8 @@ Future<List<List<String>?>> getFavorites() async {
   }
 }
 
-Future<FavoriteType?> addFavorite(String favorite, [FavoriteType? favoriteType]) async {
+Future<FavoriteType?> addFavorite(String favorite,
+    [FavoriteType? favoriteType]) async {
   try {
     if (favorite.isEmpty) {
       showSnackBar("Can't add empty favorite");
@@ -40,13 +49,15 @@ Future<FavoriteType?> addFavorite(String favorite, [FavoriteType? favoriteType])
     }
     int index = favorite.indexOf(RegExp(r'-|s\.|e\.|odc\.'));
     if (favoriteType == null && index != -1) {
-      return showFavoriteAlert(favorite.substring(0,index).trim(), favorite);
-    }
-    else if(favoriteType == null) {
+      return showFavoriteAlert(favorite.substring(0, index).trim(), favorite);
+    } else if (favoriteType == null) {
       favoriteType = FavoriteType.EPISODE;
     }
 
-    Response response = await serverPost("favorites?name=" + favorite + "&series=" + favoriteType.index.toString());
+    Response response = await serverPost("favorites?name=" +
+        favorite +
+        "&series=" +
+        favoriteType.index.toString());
     if (response.statusCode != 200 && response.statusCode != 201) {
       if (response.statusCode == 400 &&
           response.bodyBytes.contains("already added")) {
@@ -63,8 +74,7 @@ Future<FavoriteType?> addFavorite(String favorite, [FavoriteType? favoriteType])
   } catch (e) {
     if (e.toString().contains("Favorite already added")) {
       showSnackBar("Can't add, favorite already exists");
-    }
-    else {
+    } else {
       showSnackBar("Can't add favorite");
       print(e);
     }
@@ -72,9 +82,13 @@ Future<FavoriteType?> addFavorite(String favorite, [FavoriteType? favoriteType])
   }
 }
 
-Future<bool> removeFavorite(String favorite, [FavoriteType favoriteType = FavoriteType.EPISODE]) async {
+Future<bool> removeFavorite(String favorite,
+    [FavoriteType favoriteType = FavoriteType.EPISODE]) async {
   try {
-    Response response = await serverDelete("favorites?name=" + favorite + "&series=" + favoriteType.index.toString());
+    Response response = await serverDelete("favorites?name=" +
+        favorite +
+        "&series=" +
+        favoriteType.index.toString());
     if (response.statusCode != 200 && response.statusCode != 201) {
       throw Exception(response.statusCode.toString() +
           " - " +
@@ -103,20 +117,22 @@ Future<FavoriteType?> showFavoriteAlert(String title, String episode) async {
   return result;
 }
 
-Future<List<ProgramModel>> fillFavoritesDataInProgramList(List<ProgramModel> list) async {
+Future<List<ProgramModel>> fillFavoritesDataInProgramList(
+    List<ProgramModel> list) async {
   var tmp = await getFavorites();
   List<String>? favorites = tmp[0];
   if (favorites != null) {
     list.forEach((element) {
-          if (favorites.contains(element.title))
-      element.favorite = true;
+      if (favorites.contains(element.title)) element.favorite = true;
     });
   }
 
   List<String>? favorites2 = tmp[1];
   if (favorites2 != null) {
     list.forEach((element) {
-      if (element.title != null && favorites2.any((e) => element.title!.toLowerCase().contains(e.toLowerCase())))
+      if (element.title != null &&
+          favorites2.any(
+              (e) => element.title!.toLowerCase().contains(e.toLowerCase())))
         element.favorite2 = true;
     });
   }

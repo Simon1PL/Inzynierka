@@ -12,7 +12,7 @@ class ProgramListItem extends StatefulWidget {
   ProgramListItem(Key key, this.model) : super(key: key);
 
   @override
-  _ProgramListItem createState() =>  _ProgramListItem(model);
+  _ProgramListItem createState() => _ProgramListItem(model);
 }
 
 class _ProgramListItem extends State<ProgramListItem> {
@@ -25,22 +25,17 @@ class _ProgramListItem extends State<ProgramListItem> {
       padding: const EdgeInsets.only(bottom: 4.0),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(context,
-            MaterialPageRoute(
-              builder: (context) => SingleProgram(),
-              settings: RouteSettings(
-              arguments: model,
-              )
-            )
-          );
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SingleProgram(),
+                  settings: RouteSettings(
+                    arguments: model,
+                  )));
         },
         child: Padding(
-          padding: EdgeInsets.only(
-            top: 15.0,
-            right: 15.0,
-            left: 15.0,
-            bottom: 0.0
-          ),
+          padding:
+              EdgeInsets.only(top: 15.0, right: 15.0, left: 15.0, bottom: 0.0),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -49,7 +44,9 @@ class _ProgramListItem extends State<ProgramListItem> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: model.favorite2 ? Colors.blue.withOpacity(0.5) : Colors.grey.withOpacity(0.5),
+                  color: model.favorite2
+                      ? Colors.blue.withOpacity(0.5)
+                      : Colors.grey.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 1,
                   offset: Offset(0, 0), // changes position of shadow
@@ -68,94 +65,124 @@ class _ProgramListItem extends State<ProgramListItem> {
                         flex: 1,
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 12.0),
-                          child: model.title != null ? Text(
-                            model.title!,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ) : SizedBox.shrink(),
+                          child: model.title != null
+                              ? Text(
+                                  model.title!,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
+                              : SizedBox.shrink(),
                         ),
                       ),
                       GestureDetector(
                         onTap: () async {
-                          if (model.alreadyScheduled && model.orderId == null) return;
+                          if (model.alreadyScheduled && model.orderId == null)
+                            return;
 
-                          if (model.alreadyScheduled && await removeOrder(model.orderId!, context)) {
+                          if (model.alreadyScheduled &&
+                              await removeOrder(model.orderId!, context)) {
                             setState(() {
                               model.alreadyScheduled = false;
                             });
-                          }
-                          else if (!model.alreadyScheduled && await postOrder(model, context)) {
+                          } else if (!model.alreadyScheduled &&
+                              await postOrder(model, context)) {
                             setState(() {
                               model.alreadyScheduled = true;
                             });
                           }
                         },
                         child: Icon(
-                          model.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
-                          color: (model.alreadyScheduled && model.orderId == null) || model.start == null ? Colors.grey : model.alreadyScheduled ? Colors.blue : Colors.black,
+                          model.alreadyScheduled
+                              ? Icons.alarm_off
+                              : Icons.alarm,
+                          color: (model.alreadyScheduled &&
+                                      model.orderId == null) ||
+                                  model.start == null
+                              ? Colors.grey
+                              : model.alreadyScheduled
+                                  ? Colors.blue
+                                  : Colors.black,
                           size: 30,
                         ),
                       ),
                     ],
                   ),
-                  model.fileName != null ?
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 15.0),
-                    child: Row(
-                      children: [
-                        Icon(Icons.folder),
-                        Padding(padding: EdgeInsets.only(right: 5.0)),
-                        Text(
-                          model.fileName! + " (" + (model.recordSize!/1024/1024).toStringAsFixed(2) + "MB)",
-                          style: TextStyle(
-                            fontSize: 18.5,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ) : SizedBox.shrink(),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 15.0),
-                    child: model.channelName != null ? Text(
-                      model.channelName!,
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ) : SizedBox.shrink(),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      model.start != null ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            model.start != null ? DateFormat("dd.MM.yyyy").format(model.start!) : "",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Row(
+                  model.fileName != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 15.0),
+                          child: Row(
                             children: [
-                              // Icon(Icons.access_time_filled),
-                              // Padding(padding: EdgeInsets.only(right: 5.0)),
+                              Icon(Icons.folder),
+                              Padding(padding: EdgeInsets.only(right: 5.0)),
                               Text(
-                                model.start != null && model.stop != null ? DateFormat.Hm().format(model.start!) + " - " + DateFormat.Hm().format(model.stop!) : "",
+                                model.fileName! +
+                                    " (" +
+                                    (model.recordSize! / 1024 / 1024)
+                                        .toStringAsFixed(2) +
+                                    "MB)",
                                 style: TextStyle(
-                                  fontSize: 17,
+                                  fontSize: 18.5,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ) : SizedBox.shrink(),
+                        )
+                      : SizedBox.shrink(),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 15.0),
+                    child: model.channelName != null
+                        ? Text(
+                            model.channelName!,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      model.start != null
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  model.start != null
+                                      ? DateFormat("dd.MM.yyyy")
+                                          .format(model.start!)
+                                      : "",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    // Icon(Icons.access_time_filled),
+                                    // Padding(padding: EdgeInsets.only(right: 5.0)),
+                                    Text(
+                                      model.start != null && model.stop != null
+                                          ? DateFormat.Hm()
+                                                  .format(model.start!) +
+                                              " - " +
+                                              DateFormat.Hm()
+                                                  .format(model.stop!)
+                                          : "",
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : SizedBox.shrink(),
                       GestureDetector(
                         onTap: () async {
                           if (!model.favorite) {
@@ -164,7 +191,7 @@ class _ProgramListItem extends State<ProgramListItem> {
                               setState(() {
                                 model.favorite = true;
                               });
-                            else if(res == FavoriteType.TITLE) {
+                            else if (res == FavoriteType.TITLE) {
                               setState(() {
                                 model.favorite2 = true;
                               });
@@ -177,7 +204,9 @@ class _ProgramListItem extends State<ProgramListItem> {
                           }
                         },
                         child: Icon(
-                          model.favorite ? Icons.favorite : Icons.favorite_border,
+                          model.favorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
                           size: 30,
                           color: model.favorite ? Colors.blue : Colors.black,
                         ),

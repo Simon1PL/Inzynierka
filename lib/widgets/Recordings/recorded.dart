@@ -33,7 +33,8 @@ class _Recordings extends State<Recorded> {
     }
 
     programsTmp = await fillFavoritesDataInProgramList(programsTmp);
-
+    programsTmp[0].fileName ="file name";
+    programsTmp[0].recordSize =230000;
     setState(() {
       this.programs = programsTmp;
       this.dataLoaded = true;
