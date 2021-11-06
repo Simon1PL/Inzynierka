@@ -155,8 +155,9 @@ class _LoginState extends State<Login> {
                         Container(
                           margin: const EdgeInsets.only(top: 20.0),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             Text("Don't have an account? "),
                             OutlinedButton(

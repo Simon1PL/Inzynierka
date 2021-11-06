@@ -34,6 +34,10 @@ Future<List<List<String>?>> getFavorites() async {
 
 Future<FavoriteType?> addFavorite(String favorite, [FavoriteType? favoriteType]) async {
   try {
+    if (favorite.isEmpty) {
+      showSnackBar("Can't add empty favorite");
+      return null;
+    }
     int index = favorite.indexOf(RegExp(r'-|s\.|e\.|odc\.'));
     if (favoriteType == null && index != -1) {
       return showFavoriteAlert(favorite.substring(0,index).trim(), favorite);

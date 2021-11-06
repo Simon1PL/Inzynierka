@@ -48,7 +48,7 @@ class _SingleProgram extends State<SingleProgram> {
             padding: const EdgeInsets.fromLTRB(22, 15, 22, 15),
             child: SizedBox.expand(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -82,7 +82,7 @@ class _SingleProgram extends State<SingleProgram> {
                               setState(() {
                                 program.favorite = true;
                               });
-                            else if(res == FavoriteType.TITLE) {
+                            else if (res == FavoriteType.TITLE) {
                               setState(() {
                                 program.favorite2 = true;
                               });
@@ -95,35 +95,47 @@ class _SingleProgram extends State<SingleProgram> {
                           }
                         },
                         child: Icon(
-                          program.favorite ? Icons.favorite : Icons.favorite_border,
+                          program.favorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
                           size: 30,
                           color: program.favorite ? Colors.blue : Colors.black,
                         ),
                       ),
                     ],
                   ),
-                  Center(
-                    child: Text(
-                      program.subtitle == null ? "" : program.subtitle!,
-                      style: TextStyle(
-                        fontSize: 17,
+                  program.subtitle != null
+                      ? Center(
+                          child: Text(
+                            program.subtitle!,
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                  program.summary == null || program.summary == program.subtitle
+                      ? SizedBox.shrink()
+                      : Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: Text(
+                            "Summary: " + program.summary!,
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
                       ),
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      program.summary == null ? "" : program.summary!,
-                      style: TextStyle(
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    program.genre.length > 0 ? "Genre: " + program.genre.join(", ") : "",
-                    style: TextStyle(
-                      fontSize: 17,
-                    ),
-                  ),
+                  program.genre.length > 0
+                      ? Padding(
+                    padding: const EdgeInsets.only(top: 3.0),
+                        child: Text(
+                            "Genre: " + program.genre.join(", "),
+                            style: TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                      )
+                      : SizedBox.shrink(),
                   program.fileName != null
                       ? Padding(
                           padding: const EdgeInsets.only(bottom: 15.0),
@@ -150,75 +162,101 @@ class _SingleProgram extends State<SingleProgram> {
                             ],
                           ),
                         )
-                      : Text(""),
-                  Text(
-                    "Description: " +
-                        (program.description == null
-                            ? "Sorry, we have no description for this program"
-                            : program.description!),
-                    style: TextStyle(
-                      fontSize: 17,
+                      : SizedBox.shrink(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: Text(
+                          "Description: " +
+                              (program.description == null
+                                  ? "Sorry, we have no description for this program"
+                                  : program.description!),
+                          style: TextStyle(
+                            fontSize: 17,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  Text(
-                    "Channel: " +
-                        (program.channelName != null
-                            ? program.channelName!
-                            : "") +
-                        (program.channelNumber != null
-                            ? " (" + program.channelNumber! + ")"
-                            : ""),
-                    style: TextStyle(
-                      fontSize: 17,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 3.0),
+                    child: Text(
+                      "Channel: " +
+                          (program.channelName != null
+                              ? program.channelName!
+                              : "") +
+                          (program.channelNumber != null
+                              ? " (" + program.channelNumber! + ")"
+                              : "-"),
+                      style: TextStyle(
+                        fontSize: 17,
+                      ),
                     ),
                   ),
-                  Text(
-                    "Date: " +
-                        (program.start != null && program.stop != null
-                            ? DateFormat("dd.MM.yyyy").format(program.start!)
-                            : ""),
-                    style: TextStyle(
-                      fontSize: 17,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 3.0),
+                    child: Text(
+                      "Date: " +
+                          (program.start != null && program.stop != null
+                              ? DateFormat("dd.MM.yyyy").format(program.start!)
+                              : "-"),
+                      style: TextStyle(
+                        fontSize: 17,
+                      ),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Icon(Icons.access_time_filled),
-                          Padding(padding: EdgeInsets.only(right: 5)),
-                          Text(
-                            program.start != null && program.stop != null
-                                ? DateFormat.Hm().format(program.start!) +
-                                    " - " +
-                                    DateFormat.Hm().format(program.stop!)
-                                : "",
-                            style: TextStyle(
-                              fontSize: 17,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time_filled),
+                            Padding(padding: EdgeInsets.only(right: 5)),
+                            Text(
+                              program.start != null && program.stop != null
+                                  ? DateFormat.Hm().format(program.start!) +
+                                      " - " +
+                                      DateFormat.Hm().format(program.stop!)
+                                  : "00:00 - 00:00",
+                              style: TextStyle(
+                                fontSize: 17,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       GestureDetector(
                         onTap: () async {
-                          if (program.alreadyScheduled && program.orderId == null) return;
+                          if (program.alreadyScheduled &&
+                              program.orderId == null) return;
 
-                          if (program.alreadyScheduled && await removeOrder(program.orderId!, context)) {
+                          if (program.alreadyScheduled &&
+                              await removeOrder(program.orderId!, context)) {
                             setState(() {
                               program.alreadyScheduled = false;
                             });
-                          }
-                          else if (!program.alreadyScheduled && await postOrder(program, context)) {
+                          } else if (!program.alreadyScheduled &&
+                              await postOrder(program, context)) {
                             setState(() {
                               program.alreadyScheduled = true;
                             });
                           }
                         },
                         child: Icon(
-                          program.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
-                          color: (program.alreadyScheduled && program.orderId == null) || program.start == null ? Colors.grey : program.alreadyScheduled ? Colors.blue : Colors.black,
+                          program.alreadyScheduled
+                              ? Icons.alarm_off
+                              : Icons.alarm,
+                          color: (program.alreadyScheduled &&
+                                      program.orderId == null) ||
+                                  program.start == null
+                              ? Colors.grey
+                              : program.alreadyScheduled
+                                  ? Colors.blue
+                                  : Colors.black,
                           size: 30,
                         ),
                       ),

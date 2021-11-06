@@ -32,7 +32,7 @@ Future<List<ProgramModel>?> getScheduled() async {
     }
 
     List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
-    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_id"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], recordSize: p["record_size"], fileName: p["file_name"], alreadyScheduled: true, orderId: p["order_id"], genreInt: p["genre"] == null ? [] : [int.parse(p["genre"])], channelNumber: p["channel_number"].toString())).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_id"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], recordSize: p["record_size"], fileName: p["file_name"], alreadyScheduled: true, orderId: p["order_id"], genreInt: p["genres"] == null ? [] : p["genres"].cast<int>(), channelNumber: p["channel_number"].toString())).toList();
     return programs;
   }
   catch (e) {
@@ -56,7 +56,7 @@ Future<List<ProgramModel>?> getRecorded() async {
       dynamic object = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
       objects = [object];
     }
-    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_uuid"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], recordSize: p["record_size"], fileName: p["file_name"], alreadyScheduled: true, orderId: null/*, p["order_id"]*/, genreInt: p["genre"] == null ? [] : [int.parse(p["genre"])]/*genreInt: p["genre"] == null ? [] : p["genre"].cast<int>()*/, channelNumber: p["channel_number"].toString())).toList();
+    List<ProgramModel> programs = objects.map((p) => ProgramModel(channelName: p["channel_name"], channelId: p["channel_uuid"], start: p["start"], stop: p["stop"], title: p["title"], subtitle: p["subtitle"], summary: p["summary"], description: p["description"], recordSize: p["record_size"], fileName: p["file_name"], alreadyScheduled: true, orderId: null/*, p["order_id"]*/, genreInt: p["genres"] == null ? [] : p["genres"].cast<int>(), channelNumber: p["channel_number"].toString())).toList();
     return programs;
   }
   catch (e) {
@@ -67,6 +67,10 @@ Future<List<ProgramModel>?> getRecorded() async {
 
 Future<bool> postOrder(ProgramModel program, BuildContext context) async {
   try{
+    if (program.start == null) {
+      showSnackBar("There is no " + program.title! +  " in current epg");
+      return false;
+    }
     var body = jsonEncode([{"channel_id": program.channelId, "start": program.start!.millisecondsSinceEpoch/1000, "end": program.stop!.millisecondsSinceEpoch/1000}]);
     Response response = await serverPost("orders?id=" + (await selectedTunerId).toString(), body);
     if (response.statusCode != 200 && response.statusCode != 201) {

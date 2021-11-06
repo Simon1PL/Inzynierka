@@ -68,13 +68,13 @@ class _ProgramListItem extends State<ProgramListItem> {
                         flex: 1,
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 12.0),
-                          child: Text(
-                            model.title != null ? model.title! : "",
+                          child: model.title != null ? Text(
+                            model.title!,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
                             ),
-                          ),
+                          ) : SizedBox.shrink(),
                         ),
                       ),
                       GestureDetector(
@@ -116,22 +116,22 @@ class _ProgramListItem extends State<ProgramListItem> {
                         ),
                       ],
                     ),
-                  ) : Text(""),
+                  ) : SizedBox.shrink(),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15.0),
-                    child: Text(
-                      model.channelName != null ? model.channelName! : "",
+                    child: model.channelName != null ? Text(
+                      model.channelName!,
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
                       ),
-                    ),
+                    ) : SizedBox.shrink(),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Column(
+                      model.start != null ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -155,7 +155,7 @@ class _ProgramListItem extends State<ProgramListItem> {
                             ],
                           ),
                         ],
-                      ),
+                      ) : SizedBox.shrink(),
                       GestureDetector(
                         onTap: () async {
                           if (!model.favorite) {
