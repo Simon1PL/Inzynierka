@@ -30,7 +30,7 @@ Future<List<ProgramModel>?> getEpg() async {
             subtitle: p["subtitle"],
             summary: p["summary"],
             description: p["description"],
-            genreInt: p["genre"] == null ? [] : [int.parse(p["genre"])],
+            genreInt: p["genre"] == null ? [] : p["genre"].cast<int>(),
             channelNumber: p["channel_number"]))
         .toList();
     return programs;

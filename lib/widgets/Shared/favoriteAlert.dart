@@ -35,53 +35,53 @@ class FavoriteAlertState extends State<FavoriteAlert> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 155,
-      child: Column(
-        children: <Widget>[
-          RadioListTile<FavoriteType>(
-            title: Text('Add the exact episode\n($episode)'),
-            value: FavoriteType.EPISODE,
-            groupValue: favoriteType,
-            onChanged: (FavoriteType? value) {
-              setState(() {
-                favoriteType = value!;
-              });
-            },
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        RadioListTile<FavoriteType>(
+          title: Text('Add the exact episode\n($episode)'),
+          value: FavoriteType.EPISODE,
+          groupValue: favoriteType,
+          onChanged: (FavoriteType? value) {
+            setState(() {
+              favoriteType = value!;
+            });
+          },
+        ),
+        RadioListTile<FavoriteType>(
+          title: Text('Add title\n(' + _titleController.text! + ")"),
+          value: FavoriteType.TITLE,
+          groupValue: favoriteType,
+          onChanged: (FavoriteType? value) {
+            setState(() {
+              favoriteType = value!;
+            });
+          },
+        ),
+        TextField(
+          textInputAction: TextInputAction.next,
+          controller: _titleController,
+          autofocus: true,
+          decoration: InputDecoration(
+            isDense: true,
+            border: InputBorder.none,
+            filled: true,
           ),
-          RadioListTile<FavoriteType>(
-            title: Text('Add title\n(' + _titleController.text! + ")"),
-            value: FavoriteType.TITLE,
-            groupValue: favoriteType,
-            onChanged: (FavoriteType? value) {
-              setState(() {
-                favoriteType = value!;
-              });
-            },
+        ),
+        TextButton(
+          child: Text(
+            "Add",
+            style: TextStyle(fontSize: 20.0),
           ),
-          TextField(
-            textInputAction: TextInputAction.next,
-            controller: _titleController,
-            autofocus: true,
-            decoration: InputDecoration(
-              isDense: true,
-              border: InputBorder.none,
-              filled: true,
-            ),
-          ),
-          TextButton(
-            child: Text(
-              "Add",
-              style: TextStyle(fontSize: 20.0),
-            ),
-            onPressed: () async {
-              var text = favoriteType == FavoriteType.TITLE ? _titleController.text : episode;
-              var res =  await addFavorite(text, favoriteType);
-              Navigator.pop(navigatorKey.currentContext!, res);
-            },
-          )
-        ],
-      ),
+          onPressed: () async {
+            var text = favoriteType == FavoriteType.TITLE
+                ? _titleController.text
+                : episode;
+            var res = await addFavorite(text, favoriteType);
+            Navigator.pop(navigatorKey.currentContext!, res);
+          },
+        )
+      ],
     );
   }
 }

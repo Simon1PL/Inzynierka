@@ -114,6 +114,7 @@ class ProgramListState extends State<ProgramList> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 5.0),
               child: ListView.builder(
+                  primary: false,
                 controller: _controller,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,

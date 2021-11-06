@@ -1,10 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:project/enums/favorite_type.dart';
 import 'package:project/models/program_model.dart';
 import 'package:project/services/favorite_service.dart';
 import 'package:project/services/programs_service.dart';
+import 'package:project/widgets/Programs/next_in_epg_list_item.dart';
 import 'package:project/widgets/Shared/app_bar.dart';
+import 'package:project/widgets/Shared/loader.dart';
 import 'package:project/widgets/Shared/menu.dart';
 
 class SingleProgram extends StatefulWidget {
@@ -15,11 +19,43 @@ class SingleProgram extends StatefulWidget {
 }
 
 class _SingleProgram extends State<SingleProgram> {
+  List<String>? favTitles;
+  List<ProgramModel>? nextInEpg;
+  late ProgramModel program;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    program = ModalRoute.of(context)!.settings.arguments as ProgramModel;
+    if (program.favorite2 && favTitles == null) loadFav();
+    if (nextInEpg == null) loadNextInEpg();
+  }
+
+  loadFav() async {
+    var favTitlesTmp = (await getFavorites())[1]
+            ?.where(
+                (e) => program.title!.toLowerCase().contains(e.toLowerCase()))
+            .toList() ??
+        [];
+    setState(() {
+      favTitles = favTitlesTmp;
+    });
+  }
+
+  loadNextInEpg() async {
+    var nextInEpgTmp = (await getEpg())
+            ?.where((e) =>
+                program.title == e.title &&
+                (program.start != e.start || program.channelId != e.channelId))
+            .toList() ??
+        [];
+    setState(() {
+      nextInEpg = nextInEpgTmp;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    ProgramModel program =
-        ModalRoute.of(context)!.settings.arguments as ProgramModel;
-
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: MyAppBar(
@@ -109,154 +145,298 @@ class _SingleProgram extends State<SingleProgram> {
                         ],
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                program.subtitle != null
-                                    ? Center(
-                                        child: Text(
-                                          program.subtitle!,
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                          ),
-                                        ),
-                                      )
-                                    : SizedBox.shrink(),
-                                program.summary == null ||
-                                        program.summary == program.subtitle
-                                    ? SizedBox.shrink()
-                                    : Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 10.0),
-                                        child: Text(
-                                          "Summary: " + program.summary!,
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                          ),
-                                        ),
-                                      ),
-                                program.genre.length > 0
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 10.0),
-                                        child: Text(
-                                          "Genre: " + program.genre.join(", "),
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                          ),
-                                        ),
-                                      )
-                                    : SizedBox.shrink(),
-                                program.fileName != null
-                                    ? Padding(
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      program.subtitle != null
+                                          ? Center(
+                                              child: Text(
+                                                program.subtitle!,
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                ),
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+                                      program.favorite2
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 15.0),
+                                              child: Wrap(
+                                                direction: Axis.horizontal,
+                                                children: [
+                                                  Text(
+                                                    "Fitting favorite titles: ",
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 17,
+                                                    ),
+                                                  ),
+                                                  favTitles != null
+                                                      ? Text(
+                                                          favTitles!.join(", "),
+                                                          style: TextStyle(
+                                                            color: Colors.blue,
+                                                            fontSize: 17,
+                                                          ),
+                                                        )
+                                                      : SizedBox(
+                                                          width: 20,
+                                                          child:
+                                                              SpinKitFadingCircle(
+                                                            color: Colors
+                                                                .grey[800],
+                                                            size: 20,
+                                                          ),
+                                                        ),
+                                                ],
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+                                      program.summary == null ||
+                                              program.summary ==
+                                                  program.subtitle
+                                          ? SizedBox.shrink()
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0),
+                                              child: Wrap(
+                                                children: [
+                                                  Text(
+                                                    "Summary: ",
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 17,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    program.summary!,
+                                                    style: TextStyle(
+                                                      fontSize: 17,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                      program.genre.length > 0
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0),
+                                              child: Wrap(
+                                                children: [
+                                                  Text(
+                                                    "Genre: ",
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 17,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    program.genre.join(", "),
+                                                    style: TextStyle(
+                                                      fontSize: 17,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+                                      program.fileName != null
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0),
+                                              child: Wrap(
+                                                children: [
+                                                  Text(
+                                                    "Downloaded file: ",
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 17,
+                                                    ),
+                                                  ),
+                                                  Wrap(
+                                                    children: [
+                                                      Icon(Icons.folder),
+                                                      Text(
+                                                        program.fileName! +
+                                                            " (" +
+                                                            (program.recordSize! /
+                                                                    1024 /
+                                                                    1024)
+                                                                .toStringAsFixed(
+                                                                    2) +
+                                                            "MB)",
+                                                        style: TextStyle(
+                                                          fontSize: 17,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+                                      Padding(
                                         padding:
                                             const EdgeInsets.only(top: 10.0),
                                         child: Wrap(
                                           children: [
                                             Text(
-                                              "Downloaded file: ",
+                                              "Description: ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                            Text(
+                                                  (program.description == null
+                                                      ? "Sorry, we have no description for this program"
+                                                      : program.description!),
                                               style: TextStyle(
                                                 fontSize: 17,
                                               ),
                                             ),
-                                            Wrap(
-                                              children: [
-                                                Icon(Icons.folder),
-                                                Text(
-                                                  program.fileName! +
-                                                      " (" +
-                                                      (program.recordSize! /
-                                                          1024 /
-                                                          1024)
-                                                          .toStringAsFixed(2) +
-                                                      "MB)",
-                                                  style: TextStyle(
-                                                    fontSize: 17,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ],
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Wrap(
+                                          children: [
+                                          Text(
+                                            "Channel: ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 17,
+                                            ),
+                                          ),
+                                            Text(
+                                                  (program.channelName != null
+                                                      ? program.channelName!
+                                                      : "") +
+                                                  (program.channelNumber != null
+                                                      ? " (" +
+                                                          program.channelNumber! +
+                                                          ")"
+                                                      : "-"),
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      )
-                                    : SizedBox.shrink(),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Text(
-                                    "Description: " +
-                                        (program.description == null
-                                            ? "Sorry, we have no description for this program"
-                                            : program.description!),
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Text(
-                                    "Channel: " +
-                                        (program.channelName != null
-                                            ? program.channelName!
-                                            : "") +
-                                        (program.channelNumber != null
-                                            ? " (" +
-                                                program.channelNumber! +
-                                                ")"
-                                            : "-"),
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Text(
-                                    "Date: " +
-                                        (program.start != null &&
-                                                program.stop != null
-                                            ? DateFormat("dd.MM.yyyy")
-                                                .format(program.start!)
-                                            : "-"),
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.access_time_filled),
+                                      ),
                                       Padding(
-                                          padding: EdgeInsets.only(right: 5)),
-                                      Text(
-                                        program.start != null &&
-                                                program.stop != null
-                                            ? DateFormat.Hm()
-                                                    .format(program.start!) +
-                                                " - " +
-                                                DateFormat.Hm()
-                                                    .format(program.stop!)
-                                            : "00:00 - 00:00",
-                                        style: TextStyle(
-                                          fontSize: 17,
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Wrap(
+                                          children: [
+                                            Text(
+                                              "Date: ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                            Text(
+                                                  (program.start != null &&
+                                                          program.stop != null
+                                                      ? DateFormat("dd.MM.yyyy")
+                                                          .format(program.start!)
+                                                      : "-"),
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ]),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.access_time_filled),
+                                            Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 5)),
+                                            Text(
+                                              program.start != null &&
+                                                      program.stop != null
+                                                  ? DateFormat.Hm().format(
+                                                          program.start!) +
+                                                      " - " +
+                                                      DateFormat.Hm()
+                                                          .format(program.stop!)
+                                                  : "00:00 - 00:00",
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Wrap(
+                                          children: [
+                                            Text(
+                                              "Other occurrences in epg: ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                            Text(
+                                                  (nextInEpg != null &&
+                                                          nextInEpg!.length == 0
+                                                      ? "-"
+                                                      : ""),
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      nextInEpg != null
+                                          ? ListView.builder(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: nextInEpg!.length,
+                                              itemBuilder: (context, index) {
+                                                return NextInEpgListItem(
+                                                    ValueKey(nextInEpg![index]),
+                                                    nextInEpg![index],
+                                                    program);
+                                              })
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0),
+                                              child: Loader(),
+                                            )
+                                    ]),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
                 Positioned(
-                  bottom: 0,
-                  right: 0,
+                  top: 0,
+                  left: 0,
                   child: GestureDetector(
                     onTap: () async {
                       if (program.alreadyScheduled && program.orderId == null)
