@@ -7,8 +7,8 @@ import 'package:http/http.dart';
 import 'package:project/services/login_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-String _url = "http://localhost:5000";
-// String _url = "https://damp-springs-89170.herokuapp.com/";
+// String _url = "http://localhost:5000";
+String _url = "https://damp-springs-89170.herokuapp.com/";
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 

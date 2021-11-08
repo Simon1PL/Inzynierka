@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
 
   _register() {
     if (!_checkInputs()) return;
-    logIn(_loginController.text,
+    register(_loginController.text,
         _passwordController.text);
   }
 
@@ -80,6 +80,7 @@ class _LoginState extends State<Login> {
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data == false) {
             return Scaffold(
+                resizeToAvoidBottomInset: false,
                 backgroundColor: Colors.grey[200],
                 appBar: MyAppBar(
                   text: "R-M DVB-T Tuner",
