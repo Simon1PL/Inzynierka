@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
+import 'package:project/enums/user_role_for_tuner.dart';
 import 'package:project/models/tuner_model.dart';
 import 'package:project/models/tuner_user_model.dart';
 import 'package:project/services/alert_service.dart';
@@ -10,6 +11,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<List<TunerModel>> get tuners async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   return pref.getStringList("tuners")?.map((e) => TunerModel.fromJson(jsonDecode(e))).toList() ?? [];
+}
+
+Future<List<TunerModel>> get acceptedTuners async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  return pref.getStringList("tuners")?.map((e) => TunerModel.fromJson(jsonDecode(e))).where((t) => t.currentUserRole == UserRoleForTuner.USER || t.currentUserRole == UserRoleForTuner.OWNER).toList() ?? [];
+}
+
+void removeTuner(tunerId) async { // unused
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var tmpTuners = await tuners;
+  tmpTuners.removeWhere((t) => t.tunerId == tunerId);
+  pref.setStringList("tuners", tmpTuners.map((t) => json.encode(t.toJson())).toList());
 }
 
 Future<int?> get selectedTunerId async {
@@ -39,8 +52,9 @@ Future<bool> loadTunersFromServer() async {
     List<dynamic> objects = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
     List<TunerModel> tuners = objects.map((p) => TunerModel(p[0], p[1].toString(), p[2])).toList();
     SharedPreferences pref = await SharedPreferences.getInstance();
-    tuners.isNotEmpty ? pref.setInt("selectedTunerId", tuners[0].tunerId) : pref.remove("selectedTunerId");
     pref.setStringList("tuners", tuners.map((t) => json.encode(t.toJson())).toList());
+    var accepted = await acceptedTuners;
+    accepted.isNotEmpty ? pref.setInt("selectedTunerId", accepted[0].tunerId) : pref.remove("selectedTunerId");
     return true;
   }
   catch (e) {
@@ -91,7 +105,7 @@ Future<bool> inviteToTuner(String userName, int tunerId, BuildContext context) a
     return true;
   }
   catch (e) {
-    showAlert(title: "Can't invite user", text: e.toString());
+    showAlert(title: "Can't invite user", text: "user doesn't exist"/*e.toString()*/);
     return false;
   }
 }

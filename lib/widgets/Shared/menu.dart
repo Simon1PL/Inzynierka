@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:project/services/alert_service.dart';
 import 'package:project/services/globals.dart';
+import 'package:project/services/tuners_service.dart';
 
 class Menu extends StatelessWidget {
   final List<String> routes = ["/home", "/recordings/scheduled", "/programs/tv_program"];
@@ -51,7 +53,11 @@ class Menu extends StatelessWidget {
       currentIndex: currentIndex,
       selectedItemColor: noSelectedItem ? Colors.grey : Colors.black,
       unselectedItemColor: Colors.grey,
-      onTap: (index) {
+      onTap: (index) async {
+        if ((await acceptedTuners).length == 0) {
+          showSnackBar("You need at least one tuner");
+          return;
+        }
         Navigator.pushNamedAndRemoveUntil(context, routes[index], (route) => false);
       },
     );

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:project/enums/user_role_for_tuner.dart';
 import 'package:project/models/tuner_model.dart';
 import 'package:project/models/tuner_user_model.dart';
+import 'package:project/services/alert_service.dart';
+import 'package:project/services/globals.dart';
 import 'package:project/services/tuners_service.dart';
 import 'package:project/widgets/Shared/app_bar.dart';
+import 'package:project/widgets/Shared/loader.dart';
 import 'package:project/widgets/Shared/menu.dart';
+import 'package:project/widgets/Tuners/tuners.dart';
 
 class SingleTuner extends StatefulWidget {
   final TunerModel tunerModel;
@@ -18,16 +22,17 @@ class SingleTuner extends StatefulWidget {
 class _SingleTunerState extends State<SingleTuner> {
   final TunerModel tunerModel;
   List<TunerUserModel> users = [];
+  bool usersLoaded = false;
   final _userNameController = TextEditingController();
+  final FocusNode addNewFocusNode = FocusNode();
 
   _SingleTunerState(this.tunerModel);
 
   void getTunerUsers() async {
-    if (tunerModel.currentUserRole == UserRoleForTuner.USER) return;
-
     var usersTmp = await getUsersForTuner(tunerModel.tunerId) ?? [];
     setState(() {
       users = usersTmp;
+      usersLoaded = true;
     });
   }
 
@@ -39,6 +44,7 @@ class _SingleTunerState extends State<SingleTuner> {
 
   @override
   void dispose() {
+    addNewFocusNode.dispose();
     _userNameController.dispose();
     super.dispose();
   }
@@ -48,80 +54,125 @@ class _SingleTunerState extends State<SingleTuner> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: MyAppBar(
-        text: "R-M DVB-T Tuner",
+        text: tunerModel.name,
       ),
-      body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("Tuner name: " + tunerModel.name),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("Your role: " +
-              TunerModel.getUserRoleAsString(tunerModel.currentUserRole)),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("Tuner users: "),
-        ),
-        ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(users[index].username),
-                    Text("   Role: " +
-                        TunerModel.getUserRoleAsString(users[index].userRole)),
-                    if (tunerModel.currentUserRole == UserRoleForTuner.OWNER) IconButton(
-                        onPressed: () {
-                          removeUserFromTuner(
-                              users[index].username, tunerModel.tunerId);
-                        },
-                        icon: Icon(Icons.delete))
-                  ]);
-            }),
-        if (tunerModel.currentUserRole == UserRoleForTuner.OWNER) Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              constraints: BoxConstraints(maxWidth: 200),
-              child:
-                TextField(
-                  textInputAction: TextInputAction.next,
-                  onSubmitted: (term) {
-                    createTuner(_userNameController.text);
-                    Navigator.pushNamed(context, "/tuners");
-                  },
-                  controller: _userNameController,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    filled: true,
-                    border: InputBorder.none,
-                    labelText: "Name",
-                    floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  ),
-                ),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 8.0),
+              child: Text("Tuner name: " + tunerModel.name),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                var result = await inviteToTuner(_userNameController.text, tunerModel.tunerId, context);
-                if (result) {
-                  _userNameController.clear();
-                  getTunerUsers();
-                }
-              },
-              child: Text(
-                'Invite user',
-                style: TextStyle(fontSize: 25),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Your role: " +
+                  TunerModel.getUserRoleAsString(tunerModel.currentUserRole)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Tuner id: " + tunerModel.tunerId.toString()),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: TextFormField(
+                      focusNode: addNewFocusNode,
+                      controller: _userNameController,
+                      keyboardType: TextInputType.name,
+                      decoration: new InputDecoration(
+                        hintText: "Invite user",
+                        border: InputBorder.none,
+                      ),
+                      onFieldSubmitted: (val) async {
+                        if (_userNameController.text.isEmpty) {
+                          showSnackBar("Fill username to invite");
+                          return;
+                        }
+                        var result = await inviteToTuner(_userNameController.text, tunerModel.tunerId, context);
+                        if (result) {
+                          _userNameController.clear();
+                          getTunerUsers();
+                        }
+                        _userNameController.clear();
+                        addNewFocusNode.requestFocus();
+                      },
+                    ),
+                  ),
+                  ButtonTheme(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    padding: EdgeInsets.zero,
+                    child: OutlinedButton(
+                      child: Text("Invite"),
+                        onPressed: () async {
+                          if (_userNameController.text.isEmpty) {
+                            showSnackBar("Fill username to invite");
+                            return;
+                          }
+                          var result = await inviteToTuner(_userNameController.text, tunerModel.tunerId, context);
+                          if (result) {
+                            _userNameController.clear();
+                            getTunerUsers();
+                          }
+                          _userNameController.clear();
+                          addNewFocusNode.requestFocus();
+                        }),
+                  ),
+                ],
               ),
-            )
-          ],
-        ),
-        Text("")
-      ]),
+            ),
+            if (usersLoaded) Expanded(
+              child: SingleChildScrollView(
+                child: DataTable(
+                    columnSpacing: 20.0,
+                    columns: [
+                      DataColumn(
+                        label: Text('Tuner user'),
+                      ),
+                      DataColumn(
+                        label: Text('Role'),
+                      ),
+                      if (tunerModel.currentUserRole == UserRoleForTuner.OWNER) DataColumn(
+                        label: Text(''),
+                      ),
+                    ],
+                    rows: List<DataRow>.generate(
+                      users.length,
+                          (int index) => DataRow(
+                        key: ValueKey(index),
+                        cells: [
+                          DataCell(Container(width: 100, child: Text(users[index].username))),
+                          DataCell(Text(TunerModel.getUserRoleAsString(
+                              users[index].userRole))),
+                          if (tunerModel.currentUserRole == UserRoleForTuner.OWNER) DataCell(
+                            IconButton(
+                                onPressed: () async {
+                                  await removeUserFromTuner(
+                                      users[index].username, tunerModel.tunerId);
+                                  if (users[index].username == await username) {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Tuners(),
+                                        ));
+                                  }
+                                },
+                                icon: Icon(Icons.delete)),
+                          )
+                        ],
+                      ),
+                    )),
+              ),
+            ),
+            if (!usersLoaded) Loader(),
+          ]),
+        ],
+      ),
       bottomNavigationBar: Menu(),
     );
   }

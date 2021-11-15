@@ -100,6 +100,8 @@ class _FavoriteTitles extends State<FavoriteTitles> {
               ),
             ),
             IconButton(
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(),
                 icon: Icon(Icons.add_circle, size: 28,),
                 onPressed: () async {
                   if (await addFavorite(

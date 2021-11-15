@@ -18,11 +18,17 @@ Future<void> setUserCredential(String username, String password) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   pref.setString(
       "basicAuth", 'Basic ' + base64Encode(utf8.encode('$username:$password')));
+  pref.setString("username", username);
 }
 
 Future<String> get _basicAuth async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   return pref.getString("basicAuth")!;
+}
+
+Future<String> get username async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  return pref.getString("username")!;
 }
 
 Future<Response> serverPost(String endpoint, [String body = ""]) async {

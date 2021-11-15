@@ -25,7 +25,7 @@ Future<void> logIn(String username, String password) async {
       pref.setBool("isLoggedIn", true);
       await loadTunersFromServer();
       NotificationService().scheduleProgramNotifications();
-      (await tuners).isEmpty ? Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, "/tuners", (route) => false) : Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, Home.routeName, (route) => false);
+      (await selectedTunerId) == null ? Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, "/tuners", (route) => false) : Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, Home.routeName, (route) => false);
     }
     else {
       showAlert(title: "Login failed", text: "Wrong username or password");

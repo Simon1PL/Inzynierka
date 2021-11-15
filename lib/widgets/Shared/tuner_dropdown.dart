@@ -14,7 +14,7 @@ class TunerDropdownState extends State<TunerDropdown> {
 
   Future<void> loadTuners() async {
     var tunerIdTmp = (await selectedTunerId).toString();
-    var availableTunersTmp = await tuners;
+    var availableTunersTmp = await acceptedTuners;
     setState(() {
       tunerId = tunerIdTmp;
       availableTuners = availableTunersTmp;
