@@ -68,7 +68,7 @@ class _Recordings extends State<Scheduled> {
       ], 1),
       body: dataLoaded
           ? ProgramList(
-              programs, "Something goes wrong, can not load scheduled programs")
+              programs, "Something went wrong, can not load scheduled programs")
           : Loader(),
       bottomNavigationBar: Menu(currentIndex: 1),
     );

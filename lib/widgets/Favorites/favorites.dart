@@ -99,7 +99,7 @@ class _Programs extends State<Favorites> {
           },
           child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-              child: Text('TV Programme')),
+              child: Text('TV Programe')),
         ),
       ], 0),
       body: dataLoaded
@@ -154,7 +154,7 @@ class _Programs extends State<Favorites> {
               !titleView
                   ? Expanded(
                       child: ProgramList(programs,
-                          "Something goes wrong, can not get favorites"),
+                          "Something went wrong, can not get favorites"),
                     )
                   : Expanded(child: FavoriteTitles(favorites2))
             ])

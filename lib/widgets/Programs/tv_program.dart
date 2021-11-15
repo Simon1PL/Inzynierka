@@ -94,11 +94,11 @@ class _Programs extends State<TvProgram> {
           },
           child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-              child: Text('TV Programme')),
+              child: Text('TV Programe')),
         ),
       ], 1),
       body: dataLoaded
-          ? ProgramList(programs, "Something goes wrong, can not get EPG")
+          ? ProgramList(programs, "Something went wrong, can not get EPG")
           : Loader(),
       bottomNavigationBar: Menu(currentIndex: 2),
     );
