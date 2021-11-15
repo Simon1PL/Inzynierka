@@ -9,7 +9,7 @@ class SectionTitle extends StatelessWidget {
     return Container(
       height: 45,
       alignment: Alignment.center,
-      color: Colors.grey,
+      color: Colors.blue,
       child:
         Padding(
           padding: const EdgeInsets.all(5.0),

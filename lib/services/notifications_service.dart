@@ -121,7 +121,7 @@ class NotificationService {
       for(var i = 0; i < min(10, liked.length); i++) {
         var program = liked[i];
         DateTime notificationDate = program.start!.add(Duration(hours: -10)).isAfter(DateTime.now()) ? program.start!.add(Duration(hours: -10)) : DateTime.now().add(Duration(minutes: 15));
-        notificationDate = DateTime.now().add(Duration(minutes: 15));
+        notificationDate = DateTime.now().add(Duration(seconds: 15));
         scheduleNotification(program.title!, "It will be on TV on " + program.start.toString(), jsonEncode(program), notificationDate);
       }
     }
@@ -133,6 +133,7 @@ class NotificationService {
             .isAfter(DateTime.now())
             ? program.start!.add(Duration(hours: -10))
             : DateTime.now().add(Duration(minutes: 15));
+        notificationDate = DateTime.now().add(Duration(seconds: 15));
         scheduleNotification(
             program.title!, "It will be on TV on " + program.start.toString(), jsonEncode({ "value": jsonEncode(program), "type": "singleProgram" }), notificationDate);
       }

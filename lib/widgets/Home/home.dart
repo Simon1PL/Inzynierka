@@ -25,12 +25,6 @@ class _HomeState extends State<Home> {
         text: "R-M DVB-T Tuner",
       ),
       body: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        ElevatedButton(
-          onPressed: () {
-            NotificationService().scheduleNotification("String? title", "String? body", "String? payload", DateTime.now().add(Duration(seconds: 5)));
-          },
-          child: Text("NOTIFICATION"),
-        ),
         SectionTitle("Your recording list"),
         SectionTitle("Your scheduled favourites"),
         SectionTitle("Check this out"),
