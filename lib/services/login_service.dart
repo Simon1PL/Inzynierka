@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:project/services/notifications_service.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project/widgets/Home/home.dart';
@@ -23,6 +24,7 @@ Future<void> logIn(String username, String password) async {
       SharedPreferences pref = await SharedPreferences.getInstance();
       pref.setBool("isLoggedIn", true);
       await loadTunersFromServer();
+      NotificationService().scheduleProgramNotifications();
       (await tuners).isEmpty ? Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, "/tuners", (route) => false) : Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, Home.routeName, (route) => false);
     }
     else {
@@ -40,6 +42,7 @@ Future<void> logOff() async {
   await setUserCredential("", "");
   await clearTuners();
   navigatorKey.currentState!.pushNamedAndRemoveUntil(Login.routeName, (route) => false);
+  NotificationService().cancelAll();
 }
 
 Future<bool> get isLoggedIn async {

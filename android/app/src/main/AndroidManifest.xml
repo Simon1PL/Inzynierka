@@ -2,7 +2,7 @@
     package="com.example.project">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="project"
+        android:label="R-M Tuner"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

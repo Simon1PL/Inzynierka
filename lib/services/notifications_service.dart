@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:project/models/program_model.dart';
 import 'package:project/services/favorite_service.dart';
 import 'package:project/services/globals.dart';
+import 'package:project/services/login_service.dart';
 import 'package:project/services/programs_service.dart';
 import 'package:project/widgets/Programs/single_program_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,6 +101,7 @@ class NotificationService {
   }
 
   Future<void> scheduleProgramNotifications() async {
+    if (!await isLoggedIn) return;
     SharedPreferences pref = await SharedPreferences.getInstance();
     int? lastDate = pref.getInt("lastNotificationSetDate");
     if (lastDate == null) lastDate = DateTime.now().microsecondsSinceEpoch;
@@ -121,7 +123,6 @@ class NotificationService {
       for(var i = 0; i < min(10, liked.length); i++) {
         var program = liked[i];
         DateTime notificationDate = program.start!.add(Duration(hours: -10)).isAfter(DateTime.now()) ? program.start!.add(Duration(hours: -10)) : DateTime.now().add(Duration(minutes: 15));
-        notificationDate = DateTime.now().add(Duration(seconds: 15));
         scheduleNotification(program.title!, "It will be on TV on " + program.start.toString(), jsonEncode(program), notificationDate);
       }
     }
@@ -133,10 +134,15 @@ class NotificationService {
             .isAfter(DateTime.now())
             ? program.start!.add(Duration(hours: -10))
             : DateTime.now().add(Duration(minutes: 15));
-        notificationDate = DateTime.now().add(Duration(seconds: 15));
         scheduleNotification(
             program.title!, "It will be on TV on " + program.start.toString(), jsonEncode({ "value": jsonEncode(program), "type": "singleProgram" }), notificationDate);
       }
     }
+  }
+
+  cancelAll() async {
+    flutterLocalNotificationsPlugin.cancelAll();
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove("lastNotificationSetDate");
   }
 }
