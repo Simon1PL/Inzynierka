@@ -35,10 +35,10 @@ class ProgramModel {
         List<String>? genreString,
       List<int> genreInt = const []})
       : this.start = start != null
-            ? new DateTime.fromMillisecondsSinceEpoch(start * 1000)
+            ? new DateTime.fromMillisecondsSinceEpoch(start)
             : null,
         this.stop = stop != null
-            ? new DateTime.fromMillisecondsSinceEpoch(stop * 1000)
+            ? new DateTime.fromMillisecondsSinceEpoch(stop)
             : null,
         this.favorite = favorite != null ? favorite : false,
         this.favorite2 = favorite2 != null ? favorite2 : false,

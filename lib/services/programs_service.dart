@@ -24,8 +24,8 @@ Future<List<ProgramModel>?> getEpg() async {
         .map((p) => ProgramModel(
             channelName: p["channel_name"],
             channelId: p["channel_uuid"],
-            start: p["start"],
-            stop: p["stop"],
+            start: p["start"] != null ? (p["start"] * 1000) : null,
+            stop: p["stop"] != null ? (p["stop"] * 1000) : null,
             title: p["title"],
             subtitle: p["subtitle"],
             summary: p["summary"],
@@ -57,8 +57,8 @@ Future<List<ProgramModel>?> getScheduled() async {
         .map((p) => ProgramModel(
             channelName: p["channel_name"],
             channelId: p["channel_id"],
-            start: p["start"],
-            stop: p["stop"],
+            start: p["start"] != null ? (p["start"] * 1000) : null,
+            stop: p["stop"] != null ? (p["stop"] * 1000) : null,
             title: p["title"],
             subtitle: p["subtitle"],
             summary: p["summary"],
@@ -102,8 +102,8 @@ Future<List<ProgramModel>?> getRecorded() async {
         .map((p) => ProgramModel(
             channelName: p["channel_name"],
             channelId: p["channel_uuid"],
-            start: p["start"],
-            stop: p["stop"],
+            start: p["start"] != null ? (p["start"] * 1000) : null,
+            stop: p["stop"] != null ? (p["stop"] * 1000) : null,
             title: p["title"],
             subtitle: p["subtitle"],
             summary: p["summary"],

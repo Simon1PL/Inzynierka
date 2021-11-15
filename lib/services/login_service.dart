@@ -22,7 +22,7 @@ Future<void> logIn(String username, String password) async {
     dynamic responseObject = jsonDecode(utf8.decode(response.bodyBytes));
     if (responseObject["status"]) {
       SharedPreferences pref = await SharedPreferences.getInstance();
-      pref.setBool("isLoggedIn", true);
+      await pref.setBool("isLoggedIn", true);
       await loadTunersFromServer();
       NotificationService().scheduleProgramNotifications();
       (await selectedTunerId) == null ? Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, "/tuners", (route) => false) : Navigator.pushNamedAndRemoveUntil(navigatorKey.currentContext!, Home.routeName, (route) => false);

@@ -29,10 +29,7 @@ class _ProgramListItem extends State<ProgramListItem> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SingleProgram(),
-                  settings: RouteSettings(
-                    arguments: model,
-                  )));
+                  builder: (context) => SingleProgram(model)));
         },
         child: Padding(
           padding:

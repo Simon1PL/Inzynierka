@@ -13,7 +13,7 @@ import 'package:project/widgets/Tuners/tuners.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService().init();
+  var program = await NotificationService().init();
   NotificationService().requestIOSPermissions();
   NotificationService().scheduleProgramNotifications();
   // initAwesomeNotifications();
@@ -22,7 +22,7 @@ Future<void> main() async {
     title: "R-M DVB-T Tuner",
     debugShowCheckedModeBanner: false,
     navigatorKey: navigatorKey,
-    initialRoute: Login.routeName,
+    initialRoute: program != null ? "/notification" : Login.routeName,
     routes: {
       Home.routeName: (context) => Home(),
       Login.routeName: (context) => Login(),
@@ -32,6 +32,6 @@ Future<void> main() async {
       '/programs/favorites': (context) => Favorites(),
       '/recordings/recorded': (context) => Recorded(),
       '/recordings/scheduled': (context) => Scheduled(),
-      SingleProgram.routeName: (context) => SingleProgram(),
+      '/notification': (context) => SingleProgram(program!, reloadData: true), // it is needed cause if notification open app, navigation does not work and initial route is open
   }));
 }

@@ -29,11 +29,13 @@ class ProgramListState extends State<ProgramList> {
   void search() {
     if (this._notFilteredList == null) return;
 
-    _controller.animateTo(
-      0.0,
-      duration: Duration(seconds: 1),
-      curve: Curves.fastOutSlowIn,
-    );
+    if (_list!.length > 0) {
+      _controller.animateTo(
+        0.0,
+        duration: Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
 
     var searchedText = _searchController.text.toLowerCase();
     var searchByTitle = this

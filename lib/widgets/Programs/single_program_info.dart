@@ -14,10 +14,11 @@ import 'package:project/widgets/Shared/menu.dart';
 class SingleProgram extends StatefulWidget {
   static const String routeName = '/programs/program_info';
   late final bool reloadData;
+  late final ProgramModel program;
 
-  SingleProgram({this.reloadData = false});
+  SingleProgram(this.program, {this.reloadData = false});
   @override
-  _SingleProgram createState() => _SingleProgram(this.reloadData);
+  _SingleProgram createState() => _SingleProgram(this.program, this.reloadData);
 }
 
 class _SingleProgram extends State<SingleProgram> {
@@ -25,16 +26,15 @@ class _SingleProgram extends State<SingleProgram> {
   List<ProgramModel>? nextInEpg;
   late ProgramModel program;
 
-  _SingleProgram(bool reloadData) {
+  _SingleProgram(this.program, bool reloadData) {
     if (reloadData) {
       reloadProgramData();
     }
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    program = ModalRoute.of(context)!.settings.arguments as ProgramModel;
+  void initState() {
+    super.initState();
     if (program.favorite2 && favTitles == null) loadFav();
     if (nextInEpg == null) loadNextInEpg();
   }
@@ -68,15 +68,18 @@ class _SingleProgram extends State<SingleProgram> {
     setState(() {
       program.favorite2 = fav2 ?? false;
     });
+    if (program.favorite2) {
+      loadFav();
+    }
     var fav1 = favs[0]?.any((e) => program.title!.toLowerCase() == e.toLowerCase());
     setState(() {
       program.favorite = fav1 ?? false;
     });
 
-    List<ProgramModel?> scheduled = await getScheduled() ?? [];
+    List<ProgramModel> scheduled = await getScheduled() ?? [];
     scheduled.addAll(await getRecorded() ?? []);
-    var p = scheduled.firstWhere((p) => p!.title!.toLowerCase() == program.title!.toLowerCase(), orElse: () => null);
-    if (p != null) {
+    if (scheduled.any((p) => p.title!.toLowerCase() == program.title!.toLowerCase())) {
+      var p = scheduled.firstWhere((p) => p.title!.toLowerCase() == program.title!.toLowerCase());
       setState(() {
         program.alreadyScheduled = true;
         program.orderId = p.orderId;

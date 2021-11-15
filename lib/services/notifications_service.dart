@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,11 +32,13 @@ class NotificationService {
     'Basic notifications',
     channelDescription: 'Notification channel',
     playSound: true,
+    enableVibration: false,
     priority: Priority.high,
     importance: Importance.high,
+      vibrationPattern: Int64List(4),
   ), iOS: IOSNotificationDetails());
 
-  Future<void> init() async {
+  Future<ProgramModel?> init() async {
     final AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
     final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
         requestAlertPermission: false,
@@ -55,6 +58,17 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: (payload) async { onNotificationClick(payload); });
 
     tz.initializeTimeZones();
+
+    final NotificationAppLaunchDetails? notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    if ((notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) && notificationAppLaunchDetails!.payload != null) {
+      var json = jsonDecode(notificationAppLaunchDetails.payload!);
+      var value = ProgramModel.fromJson(jsonDecode(json["value"]));
+      var type = json["type"];
+      if (type == "singleProgram") {
+        return value;
+      }
+    }
+    return null;
   }
 
   void requestIOSPermissions() {
@@ -91,11 +105,8 @@ class NotificationService {
       var value = ProgramModel.fromJson(jsonDecode(json["value"]));
       var type = json["type"];
       if (type == "singleProgram") {
-        Navigator.of(navigatorKey.currentContext!).push(MaterialPageRoute(
-            builder: (context) => SingleProgram(reloadData: true),
-            settings: RouteSettings(
-              arguments: value,
-            )));
+        Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(MaterialPageRoute(
+            builder: (context) => SingleProgram(value, reloadData: true),), (Route<dynamic> route) => false);
       }
     }
   }
@@ -104,10 +115,10 @@ class NotificationService {
     if (!await isLoggedIn) return;
     SharedPreferences pref = await SharedPreferences.getInstance();
     int? lastDate = pref.getInt("lastNotificationSetDate");
-    if (lastDate == null) lastDate = DateTime.now().microsecondsSinceEpoch;
-    DateTime dateFrom = DateTime.fromMicrosecondsSinceEpoch(max(lastDate, DateTime.now().microsecondsSinceEpoch));
-    pref.setInt("lastNotificationSetDate", DateTime.now().microsecondsSinceEpoch);
-    DateTime dateTo = DateTime.fromMicrosecondsSinceEpoch(DateTime.now().add(Duration(days: 2)).microsecondsSinceEpoch);
+    if (lastDate == null) lastDate = DateTime.now().millisecondsSinceEpoch;
+    DateTime dateFrom = DateTime.fromMillisecondsSinceEpoch(max(lastDate, DateTime.now().millisecondsSinceEpoch));
+    pref.setInt("lastNotificationSetDate", (DateTime.now().add(Duration(days: 2)).millisecondsSinceEpoch));
+    DateTime dateTo = DateTime.now().add(Duration(days: 2));
     var programs = await getEpg() ?? [];
     programs = programs.where((p) => p.start!.isAfter(dateFrom) && p.stop!.isBefore(dateTo)).toList();
     var favorites = await getFavorites();
@@ -117,13 +128,17 @@ class NotificationService {
     recordedOrScheduled.addAll(await getScheduled() ?? []);
     var notScheduled = programs.where((e) => !recordedOrScheduled.contains(e.title)).toList();
     notScheduled.shuffle();
-    var liked = notScheduled.where((e) => favTitles.any((favTitle) => favTitle.contains(e.title!)) || favEpisodes.contains(e.title)).toList();
+    var liked = notScheduled.where((e) => favTitles.any((favTitle) => e.title!.contains(favTitle))).toList();
+    liked.forEach((element) {element.favorite2 = true;});
+    var liked2 = notScheduled.where((e) => favEpisodes.contains(e.title)).toList();
+    liked2.forEach((element) {element.favorite = true;});
+    liked.addAll(liked2);
     liked.shuffle();
     if (liked.length > 0) {
-      for(var i = 0; i < min(10, liked.length); i++) {
+      for(var i = 0; i < min(20, liked.length); i++) {
         var program = liked[i];
-        DateTime notificationDate = program.start!.add(Duration(hours: -10)).isAfter(DateTime.now()) ? program.start!.add(Duration(hours: -10)) : DateTime.now().add(Duration(minutes: 15));
-        scheduleNotification(program.title!, "It will be on TV on " + program.start.toString(), jsonEncode(program), notificationDate);
+        DateTime notificationDate = program.start!.add(Duration(hours: -10)).isAfter(DateTime.now()) ? program.start!.add(Duration(hours: -10)) : DateTime.now().add(Duration(minutes: 1));
+        scheduleNotification(program.title!, "It will be on TV on " + program.start.toString(), jsonEncode({ "value": jsonEncode(program), "type": "singleProgram" }), notificationDate);
       }
     }
     else {
@@ -133,7 +148,7 @@ class NotificationService {
             .add(Duration(hours: -10))
             .isAfter(DateTime.now())
             ? program.start!.add(Duration(hours: -10))
-            : DateTime.now().add(Duration(minutes: 15));
+            : DateTime.now().add(Duration(minutes: 1));
         scheduleNotification(
             program.title!, "It will be on TV on " + program.start.toString(), jsonEncode({ "value": jsonEncode(program), "type": "singleProgram" }), notificationDate);
       }

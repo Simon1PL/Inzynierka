@@ -105,7 +105,8 @@ Future<bool> inviteToTuner(String userName, int tunerId, BuildContext context) a
     return true;
   }
   catch (e) {
-    showAlert(title: "Can't invite user", text: "user doesn't exist"/*e.toString()*/);
+    if (e.toString().contains("400 -")) showAlert(title: "Can't invite user", text: e.toString());
+    else showAlert(title: "Can't invite user", text: "user doesn't exist"/*e.toString()*/);
     return false;
   }
 }

@@ -34,10 +34,7 @@ class _ProgramListItem extends State<NextInEpgListItem> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SingleProgram(),
-                  settings: RouteSettings(
-                    arguments: model,
-                  )));
+                  builder: (context) => SingleProgram(model)));
         },
         child: Padding(
           padding:
