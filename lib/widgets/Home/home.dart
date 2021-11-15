@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:project/services/login_service.dart';
+import 'package:project/widgets/Home/explore_list.dart';
 import 'package:project/widgets/Home/login.dart';
+import 'package:project/widgets/Home/recording_list.dart';
 import 'package:project/widgets/Shared/app_bar.dart';
 import 'package:project/widgets/Shared/menu.dart';
 import 'package:project/widgets/Home/section_title.dart';
@@ -32,11 +34,11 @@ class _HomeState extends State<Home> {
       appBar: MyAppBar(
         text: "R-M DVB-T Tuner",
       ),
-      body: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        SectionTitle("Your recording list"),
-        SectionTitle("Your scheduled favourites"),
+      body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         SectionTitle("Check this out"),
-        Text(""),
+        ExploreList(),
+        SectionTitle("Your recording list"),
+        RecordingList(),
       ]),
       bottomNavigationBar: Menu(
         currentIndex: 0,

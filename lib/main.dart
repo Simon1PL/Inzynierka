@@ -7,7 +7,6 @@ import 'package:project/widgets/Home/login.dart';
 import 'package:project/services/globals.dart';
 import 'package:project/widgets/Recordings/scheduled.dart';
 import 'package:project/widgets/Home/home.dart';
-import 'package:project/widgets/Programs/explore.dart';
 import 'package:project/widgets/Recordings/recorded.dart';
 import 'package:project/widgets/Tuners/tuners.dart';
 
@@ -28,7 +27,6 @@ Future<void> main() async {
       Login.routeName: (context) => Login(),
       '/tuners': (context) => Tuners(),
       '/programs/tv_program': (context) => TvProgram(),
-      '/programs/explore': (context) => Explore(),
       '/programs/favorites': (context) => Favorites(),
       '/recordings/recorded': (context) => Recorded(),
       '/recordings/scheduled': (context) => Scheduled(),
