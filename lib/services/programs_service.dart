@@ -132,7 +132,7 @@ Future<bool> postOrder(ProgramModel program, BuildContext context) async {
       {
         "channel_id": program.channelId,
         "start": program.start!.millisecondsSinceEpoch / 1000,
-        "end": program.stop!.millisecondsSinceEpoch / 1000
+        "stop": program.stop!.millisecondsSinceEpoch / 1000
       }
     ]);
     Response response = await serverPost(

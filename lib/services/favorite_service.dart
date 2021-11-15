@@ -25,11 +25,11 @@ Future<List<List<String>?>> getFavorites() async {
         objects.map((p) => List<dynamic>.from(p)).toList();
     Map<dynamic, List<List>> favoritesMap =
         groupBy(favorites, (List<dynamic> obj) => obj[1]);
-    var favTitles = favoritesMap[FavoriteType.TITLE.index]
+    var favTitles = favoritesMap[FavoriteType.TITLE.index == 0 ? false : true]
             ?.map((e) => e[0].toString())
             .toList() ??
         [];
-    var favEpisodes = favoritesMap[FavoriteType.EPISODE.index]
+    var favEpisodes = favoritesMap[FavoriteType.EPISODE.index == 0 ? false : true]
             ?.map((e) => e[0].toString())
             .toList() ??
         [];

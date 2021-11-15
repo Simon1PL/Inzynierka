@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project/services/awesome_notifications_service.dart';
 import 'package:project/services/notifications_service.dart';
 import 'package:project/widgets/Favorites/favorites.dart';
 import 'package:project/widgets/Programs/single_program_info.dart';
@@ -17,9 +16,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().init();
   NotificationService().requestIOSPermissions();
-  initAwesomeNotifications();
+  NotificationService().scheduleProgramNotifications();
+  // initAwesomeNotifications();
 
   runApp(MaterialApp(
+    title: "R-M DVB-T Tuner",
+    debugShowCheckedModeBanner: false,
     navigatorKey: navigatorKey,
     initialRoute: Login.routeName,
     routes: {

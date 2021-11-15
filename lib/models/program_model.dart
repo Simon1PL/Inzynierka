@@ -32,6 +32,7 @@ class ProgramModel {
       bool? alreadyScheduled,
       this.orderId,
       this.channelNumber,
+        List<String>? genreString,
       List<int> genreInt = const []})
       : this.start = start != null
             ? new DateTime.fromMillisecondsSinceEpoch(start * 1000)
@@ -43,8 +44,33 @@ class ProgramModel {
         this.favorite2 = favorite2 != null ? favorite2 : false,
         this.alreadyScheduled =
             alreadyScheduled != null ? alreadyScheduled : false,
-        this.genre =
+        this.genre = genreString != null ? genreString :
             List.from(genreInt.map((e) => ProgramModel.getGenreFromInt(e)));
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['orderId'] = orderId.toString();
+    data['channelName'] = channelName;
+    data['channelId'] = channelId;
+    data['start'] = start == null ? 0 : start!.millisecondsSinceEpoch.toString();
+    data['stop'] = stop == null ? 0 : stop!.millisecondsSinceEpoch.toString();
+    data['title'] = title;
+    data['subtitle'] = subtitle;
+    data['description'] = description;
+    data['recordSize'] = recordSize.toString();
+    data['fileName'] = fileName;
+    data['favorite'] = favorite.toString();
+    data['favorite2'] = favorite2.toString();
+    data['alreadyScheduled'] = alreadyScheduled.toString();
+    data['genre'] = genre.length > 0 ? genre.first : -1;
+    data['summary'] = summary;
+    data['channelNumber'] = channelNumber;
+    return data;
+  }
+
+  factory ProgramModel.fromJson(Map<String, dynamic> json) {
+    return ProgramModel(orderId: json["orderId"] == "null" ? null : int.parse(json["orderId"]), channelName: json["channelName"], channelId: json["channelId"], start: int.parse(json["start"]), stop: int.parse(json["stop"]), title: json["title"],subtitle: json["subtitle"], description: json["description"], recordSize: json["recordSize"] == "null" ? null : int.parse(json["recordSize"]),fileName: json["fileName"], favorite: json["favorite"].toLowerCase() == "true", favorite2: json["favorite2"].toLowerCase() == "true",alreadyScheduled: json["alreadyScheduled"].toLowerCase() == "true", genreString: [json["genre"]],summary: json["summary"], channelNumber: json["channelNumber"],);
+  }
 
   static String getGenreFromInt(int genre) {
     switch (genre) {
