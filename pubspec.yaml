@@ -34,6 +34,7 @@ dependencies:
   rxdart: ^0.27.2
   awesome_notifications: ^0.6.16
   flutter_launcher_icons: ^0.9.2
+  flutter_datetime_picker: ^1.5.1
 
 flutter_icons:
   android: true

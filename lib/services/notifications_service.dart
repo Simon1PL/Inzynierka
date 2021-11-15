@@ -18,49 +18,63 @@ import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   //Singleton pattern
-  static final NotificationService _notificationService = NotificationService._internal();
+  static final NotificationService _notificationService =
+      NotificationService._internal();
   factory NotificationService() {
     return _notificationService;
   }
   NotificationService._internal();
 
   //instance of FlutterLocalNotificationsPlugin
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
-  NotificationDetails platformChannelSpecifics = NotificationDetails(android: AndroidNotificationDetails(
-    'channel ID',
-    'Basic notifications',
-    channelDescription: 'Notification channel',
-    playSound: true,
-    enableVibration: false,
-    priority: Priority.high,
-    importance: Importance.high,
-      vibrationPattern: Int64List(4),
-  ), iOS: IOSNotificationDetails());
+  NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'channel ID',
+        'Basic notifications',
+        channelDescription: 'Notification channel',
+        playSound: true,
+        enableVibration: false,
+        priority: Priority.high,
+        importance: Importance.high,
+        vibrationPattern: Int64List(4),
+      ),
+      iOS: IOSNotificationDetails());
 
   Future<ProgramModel?> init() async {
-    final AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false,
-        onDidReceiveLocalNotification: (
-            int id,
-            String? title,
-            String? body,
-            String? payload,
+    final AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+    final IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings(
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+            onDidReceiveLocalNotification: (
+              int id,
+              String? title,
+              String? body,
+              String? payload,
             ) async {
               // Some code
-        });
+            });
 
-    final InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsIOS);
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: (payload) async { onNotificationClick(payload); });
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (payload) async {
+      onNotificationClick(payload);
+    });
 
     tz.initializeTimeZones();
 
-    final NotificationAppLaunchDetails? notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-    if ((notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) && notificationAppLaunchDetails!.payload != null) {
+    final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    if ((notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) &&
+        notificationAppLaunchDetails!.payload != null) {
       var json = jsonDecode(notificationAppLaunchDetails.payload!);
       var value = ProgramModel.fromJson(jsonDecode(json["value"]));
       var type = json["type"];
@@ -74,15 +88,16 @@ class NotificationService {
   void requestIOSPermissions() {
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
-  Future<void> showNotification(String? title, String? body, String? payload) async {
+  Future<void> showNotification(
+      String? title, String? body, String? payload) async {
     var randomId = new Random().nextInt(16);
 
     await flutterLocalNotificationsPlugin.show(
@@ -94,19 +109,33 @@ class NotificationService {
     );
   }
 
-  Future<void> scheduleNotification(String? title, String? body, String? payload, DateTime scheduledDate) async {
+  Future<void> scheduleNotification(String? title, String? body,
+      String? payload, DateTime scheduledDate) async {
     var randomId = new Random().nextInt(16);
-    await flutterLocalNotificationsPlugin.zonedSchedule(randomId, title, body, tz.TZDateTime.now(tz.local).add(scheduledDate.difference(DateTime.now())), platformChannelSpecifics, uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidAllowWhileIdle: true, payload: payload);
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        randomId,
+        title,
+        body,
+        tz.TZDateTime.now(tz.local)
+            .add(scheduledDate.difference(DateTime.now())),
+        platformChannelSpecifics,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true,
+        payload: payload);
   }
 
   Future<void> onNotificationClick(String? payload) async {
-    if(payload != null) {
+    if (payload != null) {
       var json = jsonDecode(payload);
       var value = ProgramModel.fromJson(jsonDecode(json["value"]));
       var type = json["type"];
       if (type == "singleProgram") {
-        Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(MaterialPageRoute(
-            builder: (context) => SingleProgram(value, reloadData: true),), (Route<dynamic> route) => false);
+        Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => SingleProgram(value, reloadData: true),
+            ),
+            (Route<dynamic> route) => false);
       }
     }
   }
@@ -115,42 +144,63 @@ class NotificationService {
     if (!await isLoggedIn) return;
     SharedPreferences pref = await SharedPreferences.getInstance();
     int? lastDate = pref.getInt("lastNotificationSetDate");
-    if (lastDate == null) lastDate = DateTime.now().add(Duration(hours: 9)).millisecondsSinceEpoch;
-    DateTime dateFrom = DateTime.fromMillisecondsSinceEpoch(max(lastDate, DateTime.now().millisecondsSinceEpoch));
-    pref.setInt("lastNotificationSetDate", (DateTime.now().add(Duration(days: 7)).millisecondsSinceEpoch));
+    if (lastDate == null)
+      lastDate = DateTime.now().add(Duration(hours: 9)).millisecondsSinceEpoch;
+    DateTime dateFrom = DateTime.fromMillisecondsSinceEpoch(
+        max(lastDate, DateTime.now().millisecondsSinceEpoch));
+    pref.setInt("lastNotificationSetDate",
+        (DateTime.now().add(Duration(days: 7)).millisecondsSinceEpoch));
     DateTime dateTo = DateTime.now().add(Duration(days: 7));
     var programs = await getEpg() ?? [];
-    programs = programs.where((p) => p.start!.isAfter(dateFrom) && p.stop!.isBefore(dateTo)).toList();
+    programs = programs
+        .where((p) => p.start!.isAfter(dateFrom) && p.stop!.isBefore(dateTo))
+        .toList();
     var favorites = await getFavorites();
     var favTitles = favorites[1] ?? [];
     var favEpisodes = favorites[0] ?? [];
     var recordedOrScheduled = await getRecorded() ?? [];
     recordedOrScheduled.addAll(await getScheduled() ?? []);
-    var notScheduled = programs.where((e) => !recordedOrScheduled.contains(e.title)).toList();
+    var notScheduled =
+        programs.where((e) => !recordedOrScheduled.contains(e.title)).toList();
     notScheduled.shuffle();
-    var liked = notScheduled.where((e) => favTitles.any((favTitle) => e.title!.contains(favTitle))).toList();
-    liked.forEach((element) {element.favorite2 = true;});
-    var liked2 = notScheduled.where((e) => favEpisodes.contains(e.title)).toList();
-    liked2.forEach((element) {element.favorite = true;});
+    var liked = notScheduled
+        .where((e) => favTitles.any((favTitle) => e.title!.contains(favTitle)))
+        .toList();
+    liked.forEach((element) {
+      element.favorite2 = true;
+    });
+    var liked2 =
+        notScheduled.where((e) => favEpisodes.contains(e.title)).toList();
+    liked2.forEach((element) {
+      element.favorite = true;
+    });
     liked.addAll(liked2);
     liked.shuffle();
     if (liked.length > 0) {
-      for(var i = 0; i < min(50, liked.length); i++) {
+      for (var i = 0; i < min(250, liked.length); i++) {
         var program = liked[i];
-        DateTime notificationDate = program.start!.add(Duration(hours: -10)).isAfter(DateTime.now()) ? program.start!.add(Duration(hours: -10)) : DateTime.now().add(Duration(minutes: 1));
-        scheduleNotification(program.title!, "It will be on TV on " + program.start.toString(), jsonEncode({ "value": jsonEncode(program), "type": "singleProgram" }), notificationDate);
+        DateTime notificationDate =
+            program.start!.add(Duration(hours: -10)).isAfter(DateTime.now())
+                ? program.start!.add(Duration(hours: -10))
+                : DateTime.now().add(Duration(minutes: 1));
+        scheduleNotification(
+            program.title!,
+            "It will be on TV on " + program.start.toString(),
+            jsonEncode({"value": jsonEncode(program), "type": "singleProgram"}),
+            notificationDate);
       }
-    }
-    else {
+    } else {
       for (var i = 0; i < min(2, notScheduled.length); i++) {
         var program = notScheduled[i];
-        DateTime notificationDate = program.start!
-            .add(Duration(hours: -10))
-            .isAfter(DateTime.now())
-            ? program.start!.add(Duration(hours: -10))
-            : DateTime.now().add(Duration(minutes: 1));
+        DateTime notificationDate =
+            program.start!.add(Duration(hours: -10)).isAfter(DateTime.now())
+                ? program.start!.add(Duration(hours: -10))
+                : DateTime.now().add(Duration(minutes: 1));
         scheduleNotification(
-            program.title!, "It will be on TV on " + program.start.toString(), jsonEncode({ "value": jsonEncode(program), "type": "singleProgram" }), notificationDate);
+            program.title!,
+            "It will be on TV on " + program.start.toString(),
+            jsonEncode({"value": jsonEncode(program), "type": "singleProgram"}),
+            notificationDate);
       }
     }
   }

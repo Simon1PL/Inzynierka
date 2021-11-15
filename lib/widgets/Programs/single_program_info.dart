@@ -64,28 +64,31 @@ class _SingleProgram extends State<SingleProgram> {
 
   reloadProgramData() async {
     var favs = await getFavorites();
-    var fav2 = favs[1]?.any((e) => program.title!.toLowerCase().contains(e.toLowerCase()));
+    var fav2 = favs[1]
+        ?.any((e) => program.title!.toLowerCase().contains(e.toLowerCase()));
     setState(() {
       program.favorite2 = fav2 ?? false;
     });
     if (program.favorite2) {
       loadFav();
     }
-    var fav1 = favs[0]?.any((e) => program.title!.toLowerCase() == e.toLowerCase());
+    var fav1 =
+        favs[0]?.any((e) => program.title!.toLowerCase() == e.toLowerCase());
     setState(() {
       program.favorite = fav1 ?? false;
     });
 
     List<ProgramModel> scheduled = await getScheduled() ?? [];
     scheduled.addAll(await getRecorded() ?? []);
-    if (scheduled.any((p) => p.title!.toLowerCase() == program.title!.toLowerCase())) {
-      var p = scheduled.firstWhere((p) => p.title!.toLowerCase() == program.title!.toLowerCase());
+    if (scheduled
+        .any((p) => p.title!.toLowerCase() == program.title!.toLowerCase())) {
+      var p = scheduled.firstWhere(
+          (p) => p.title!.toLowerCase() == program.title!.toLowerCase());
       setState(() {
         program.alreadyScheduled = true;
         program.orderId = p.orderId;
       });
-    }
-    else {
+    } else {
       setState(() {
         program.alreadyScheduled = false;
         program.orderId = null;
@@ -213,7 +216,8 @@ class _SingleProgram extends State<SingleProgram> {
                                                   Text(
                                                     "Fitting favorite titles: ",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       fontSize: 17,
                                                     ),
                                                   ),
@@ -250,7 +254,8 @@ class _SingleProgram extends State<SingleProgram> {
                                                   Text(
                                                     "Summary: ",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       fontSize: 17,
                                                     ),
                                                   ),
@@ -272,7 +277,8 @@ class _SingleProgram extends State<SingleProgram> {
                                                   Text(
                                                     "Genre: ",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       fontSize: 17,
                                                     ),
                                                   ),
@@ -295,7 +301,8 @@ class _SingleProgram extends State<SingleProgram> {
                                                   Text(
                                                     "Downloaded file: ",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       fontSize: 17,
                                                     ),
                                                   ),
@@ -336,9 +343,9 @@ class _SingleProgram extends State<SingleProgram> {
                                               ),
                                             ),
                                             Text(
-                                                  (program.description == null
-                                                      ? "Sorry, we have no description for this program"
-                                                      : program.description!),
+                                              (program.description == null
+                                                  ? "Sorry, we have no description for this program"
+                                                  : program.description!),
                                               style: TextStyle(
                                                 fontSize: 17,
                                               ),
@@ -351,20 +358,21 @@ class _SingleProgram extends State<SingleProgram> {
                                             const EdgeInsets.only(top: 10.0),
                                         child: Wrap(
                                           children: [
-                                          Text(
-                                            "Channel: ",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 17,
-                                            ),
-                                          ),
                                             Text(
-                                                  (program.channelName != null
+                                              "Channel: ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                            Text(
+                                              (program.channelName != null
                                                       ? program.channelName!
                                                       : "") +
                                                   (program.channelNumber != null
                                                       ? " (" +
-                                                          program.channelNumber! +
+                                                          program
+                                                              .channelNumber! +
                                                           ")"
                                                       : "-"),
                                               style: TextStyle(
@@ -387,11 +395,11 @@ class _SingleProgram extends State<SingleProgram> {
                                               ),
                                             ),
                                             Text(
-                                                  (program.start != null &&
-                                                          program.stop != null
-                                                      ? DateFormat("dd.MM.yyyy")
-                                                          .format(program.start!)
-                                                      : "-"),
+                                              (program.start != null &&
+                                                      program.stop != null
+                                                  ? DateFormat("dd.MM.yyyy")
+                                                      .format(program.start!)
+                                                  : "-"),
                                               style: TextStyle(
                                                 fontSize: 17,
                                               ),
@@ -437,10 +445,10 @@ class _SingleProgram extends State<SingleProgram> {
                                               ),
                                             ),
                                             Text(
-                                                  (nextInEpg != null &&
-                                                          nextInEpg!.length == 0
-                                                      ? "-"
-                                                      : ""),
+                                              (nextInEpg != null &&
+                                                      nextInEpg!.length == 0
+                                                  ? "-"
+                                                  : ""),
                                               style: TextStyle(
                                                 fontSize: 17,
                                               ),
