@@ -5,6 +5,7 @@ import 'package:project/models/program_model.dart';
 import 'dart:convert';
 import 'package:project/services/alert_service.dart';
 import 'package:project/services/globals.dart';
+import 'package:project/services/notifications_service.dart';
 import 'package:project/widgets/Shared/favoriteAlert.dart';
 import "package:collection/collection.dart";
 
@@ -70,6 +71,7 @@ Future<FavoriteType?> addFavorite(String favorite,
           utf8.decode(response.bodyBytes));
     }
 
+    NotificationService().afterFavoriteChangeRefreshNotification();
     return favoriteType;
   } catch (e) {
     if (e.toString().contains("Favorite already added")) {

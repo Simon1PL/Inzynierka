@@ -115,10 +115,10 @@ class NotificationService {
     if (!await isLoggedIn) return;
     SharedPreferences pref = await SharedPreferences.getInstance();
     int? lastDate = pref.getInt("lastNotificationSetDate");
-    if (lastDate == null) lastDate = DateTime.now().millisecondsSinceEpoch;
+    if (lastDate == null) lastDate = DateTime.now().add(Duration(hours: 9)).millisecondsSinceEpoch;
     DateTime dateFrom = DateTime.fromMillisecondsSinceEpoch(max(lastDate, DateTime.now().millisecondsSinceEpoch));
-    pref.setInt("lastNotificationSetDate", (DateTime.now().add(Duration(days: 2)).millisecondsSinceEpoch));
-    DateTime dateTo = DateTime.now().add(Duration(days: 2));
+    pref.setInt("lastNotificationSetDate", (DateTime.now().add(Duration(days: 7)).millisecondsSinceEpoch));
+    DateTime dateTo = DateTime.now().add(Duration(days: 7));
     var programs = await getEpg() ?? [];
     programs = programs.where((p) => p.start!.isAfter(dateFrom) && p.stop!.isBefore(dateTo)).toList();
     var favorites = await getFavorites();
@@ -135,7 +135,7 @@ class NotificationService {
     liked.addAll(liked2);
     liked.shuffle();
     if (liked.length > 0) {
-      for(var i = 0; i < min(20, liked.length); i++) {
+      for(var i = 0; i < min(50, liked.length); i++) {
         var program = liked[i];
         DateTime notificationDate = program.start!.add(Duration(hours: -10)).isAfter(DateTime.now()) ? program.start!.add(Duration(hours: -10)) : DateTime.now().add(Duration(minutes: 1));
         scheduleNotification(program.title!, "It will be on TV on " + program.start.toString(), jsonEncode({ "value": jsonEncode(program), "type": "singleProgram" }), notificationDate);
@@ -159,5 +159,10 @@ class NotificationService {
     flutterLocalNotificationsPlugin.cancelAll();
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove("lastNotificationSetDate");
+  }
+
+  afterFavoriteChangeRefreshNotification() async {
+    await cancelAll();
+    await scheduleProgramNotifications();
   }
 }
