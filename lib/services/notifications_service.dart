@@ -92,7 +92,7 @@ class NotificationService {
       var type = json["type"];
       if (type == "singleProgram") {
         Navigator.of(navigatorKey.currentContext!).push(MaterialPageRoute(
-            builder: (context) => SingleProgram(),
+            builder: (context) => SingleProgram(reloadData: true),
             settings: RouteSettings(
               arguments: value,
             )));

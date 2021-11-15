@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project/enums/favorite_type.dart';
 import 'package:project/models/program_model.dart';
+import 'package:project/services/alert_service.dart';
 import 'package:project/widgets/Programs/single_program_info.dart';
 import 'package:project/services/favorite_service.dart';
 import 'package:project/services/programs_service.dart';
@@ -78,8 +79,10 @@ class _ProgramListItem extends State<ProgramListItem> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          if (model.alreadyScheduled && model.orderId == null)
+                          if (model.alreadyScheduled && model.orderId == null) {
+                            showSnackBar("Can't remove order, program is saved on disc");
                             return;
+                          }
 
                           if (model.alreadyScheduled &&
                               await removeOrder(model.orderId!, context)) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:project/models/program_model.dart';
 import 'package:project/widgets/Programs/program_list_item.dart';
 
@@ -46,18 +47,19 @@ class ProgramListState extends State<ProgramList> {
         ._notFilteredList!
         .where((element) =>
             element.title != null &&
-            !element.title!.contains(searchedText) &&
+            !element.title!.toLowerCase().contains(searchedText) &&
             ((element.summary != null &&
-                    element.summary!.contains(searchedText)) ||
+                    element.summary!.toLowerCase().contains(searchedText)) ||
                 (element.description != null &&
-                    element.description!.contains(searchedText)) ||
+                    element.description!.toLowerCase().contains(searchedText)) ||
                 (element.subtitle != null &&
-                    element.subtitle!.contains(searchedText)) ||
+                    element.subtitle!.toLowerCase().contains(searchedText)) ||
                 (element.channelName != null &&
-                    element.channelName!.contains(searchedText)) ||
-                element.start.toString().contains(searchedText) ||
-                element.stop.toString().contains(searchedText)))
-        .toList();
+                    element.channelName!.toLowerCase().contains(searchedText)) ||
+                (element.start != null && element.stop != null && ((DateFormat.Hm().format(element.start!) + " - " + DateFormat.Hm().format(element.stop!)).contains(searchedText) || DateFormat("dd.MM.yyyy").format(element.start!).contains(searchedText))
+                )
+            )
+        ).toList();
 
     var tmpList = <ProgramModel>[];
     tmpList.addAll(searchByTitle);
@@ -127,15 +129,40 @@ class ProgramListState extends State<ProgramList> {
         ],
       );
     } else {
-      return Center(
-        child: Text(
-          "No data",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+      return Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+            child: TextField(
+              textInputAction: TextInputAction.search,
+              onSubmitted: (term) {
+                search();
+              },
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: "Search",
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    search();
+                  },
+                ),
+                contentPadding: EdgeInsets.only(left: 10.0, top: 20.0),
+              ),
+            ),
+          ),
+          Padding(padding: const EdgeInsets.only(bottom: 25.0),),
+          Center(
+          child: Text(
+            "No data",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
+        ]
       );
     }
   }

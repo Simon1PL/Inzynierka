@@ -13,15 +13,23 @@ import 'package:project/widgets/Shared/menu.dart';
 
 class SingleProgram extends StatefulWidget {
   static const String routeName = '/programs/program_info';
+  late final bool reloadData;
 
+  SingleProgram({this.reloadData = false});
   @override
-  _SingleProgram createState() => _SingleProgram();
+  _SingleProgram createState() => _SingleProgram(this.reloadData);
 }
 
 class _SingleProgram extends State<SingleProgram> {
   List<String>? favTitles;
   List<ProgramModel>? nextInEpg;
   late ProgramModel program;
+
+  _SingleProgram(bool reloadData) {
+    if (reloadData) {
+      reloadProgramData();
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -52,6 +60,35 @@ class _SingleProgram extends State<SingleProgram> {
     setState(() {
       nextInEpg = nextInEpgTmp;
     });
+  }
+
+  reloadProgramData() async {
+    var favs = await getFavorites();
+    var fav2 = favs[1]?.any((e) => program.title!.toLowerCase().contains(e.toLowerCase()));
+    setState(() {
+      program.favorite2 = fav2 ?? false;
+    });
+    var fav1 = favs[0]?.any((e) => program.title!.toLowerCase() == e.toLowerCase());
+    setState(() {
+      program.favorite = fav1 ?? false;
+    });
+
+    List<ProgramModel?> scheduled = await getScheduled() ?? [];
+    scheduled.addAll(await getRecorded() ?? []);
+    var p = scheduled.firstWhere((p) => p!.title!.toLowerCase() == program.title!.toLowerCase(), orElse: () => null);
+    if (p != null) {
+      setState(() {
+        program.alreadyScheduled = true;
+        program.orderId = p.orderId;
+      });
+    }
+    else {
+      setState(() {
+        program.alreadyScheduled = false;
+        program.orderId = null;
+        program.recordSize = null;
+      });
+    }
   }
 
   @override
