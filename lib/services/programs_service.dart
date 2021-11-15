@@ -124,8 +124,12 @@ Future<List<ProgramModel>?> getRecorded() async {
 
 Future<bool> postOrder(ProgramModel program, BuildContext context) async {
   try {
-    if (program.start == null) {
+    if (program.start == null || program.stop == null) {
       showSnackBar("There is no " + program.title! + " in current epg");
+      return false;
+    }
+    if (program.stop!.isBefore(DateTime.now())) {
+      showSnackBar("Can't schedule, the program has already finished");
       return false;
     }
     var body = jsonEncode([
