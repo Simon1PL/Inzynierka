@@ -27,7 +27,6 @@ class ProgramListState extends State<ProgramList> {
   ProgramListState(this._list, this._errorText) {
     if (_list != null) {
       _notFilteredList = new List<ProgramModel>.from(_list!);
-      _list = _list!.where((e) => e.stop!.isAfter(DateTime.now())).toList();
     }
   }
 
@@ -240,7 +239,9 @@ class ProgramListState extends State<ProgramList> {
                   child: IconButton(
                     icon: Icon(Icons.filter_alt),
                     iconSize: 33,
-                    onPressed: () => openFilters = !openFilters,
+                    onPressed: () => setState(() {
+                      openFilters = !openFilters;
+                    }),
                   ),
                 ),
                 Expanded(
@@ -285,13 +286,13 @@ class ProgramListState extends State<ProgramList> {
           if (openFilters) ProgramListFilters(_notFilteredList, filters),
           if (openFilters)
             Positioned(
-              top: 70,
+              top: 65,
               right: 10,
               child: IconButton(
                   icon: Icon(Icons.close),
                   onPressed: () => setState(() {
-                        openFilters = false;
-                      })),
+                    openFilters = false;
+                  })),
             ),
           if (openFilters)
             Positioned(
