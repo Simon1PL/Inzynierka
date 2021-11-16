@@ -1,5 +1,5 @@
 class FiltersModel {
-  bool showPast = false;
+  bool showPast = true;
   String? channelName;
   DateTime? dateFrom;
   DateTime? dateTo;
@@ -8,7 +8,7 @@ class FiltersModel {
 
   void reset() {
     channelName = null;
-    showPast = false;
+    showPast = true;
     dateFrom = null;
     dateTo = null;
   }

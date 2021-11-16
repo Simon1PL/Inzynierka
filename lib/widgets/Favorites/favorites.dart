@@ -99,7 +99,7 @@ class _Programs extends State<Favorites> {
           },
           child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-              child: Text('TV Programe')),
+              child: Text('TV Program')),
         ),
       ], 0),
       body: dataLoaded
