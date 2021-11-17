@@ -7,15 +7,13 @@
     <title>DOWNLOAD</title>
 </head>
 <body style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-    <button onclick="download('app-v0.9.1.apk')">DOWNLOAD v0.9.1</button>
+    <button onclick="download('1.0.0')">DOWNLOAD v1.0.0</button>
     <br/>
-    <button onclick="download('app-v0.9.3.apk')">DOWNLOAD v0.9.3</button> notifications test
-    <br/>
-    <button onclick="download('app-v1.0.apk')">DOWNLOAD v1.0</button>
-    
+    <button onclick="download('1.1.0')">DOWNLOAD v1.1.0</button>
+
     <script>
-        function download(url) {
-            window.location.href = url;
+        function download(version) {
+            window.location.href = `https://github.com/Simon1PL/Inzynierka/releases/download/v${version}/app-release.apk`;
         }
     </script>
 </body>
