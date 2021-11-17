@@ -62,6 +62,11 @@ class ProgramListState extends State<ProgramList> {
       _list = _list!.where((e) => e.start!.isBefore(filters.dateTo!)).toList();
     }
 
+    if (filters.genre != null) {
+      _list =
+          _list!.where((e) => e.genre.contains(filters.genre)).toList();
+    }
+
     var searchedText = _searchController.text.toLowerCase();
     if (searchedText.isNotEmpty) {
       var searchByTitle = this
@@ -201,7 +206,7 @@ class ProgramListState extends State<ProgramList> {
             ),
           if (openFilters)
             Positioned(
-                top: 280,
+                top: 320,
                 right: 0,
                 left: 0,
                 child: Row(
@@ -296,7 +301,7 @@ class ProgramListState extends State<ProgramList> {
             ),
           if (openFilters)
             Positioned(
-                top: 280,
+                top: 320,
                 right: 0,
                 left: 0,
                 child: Row(

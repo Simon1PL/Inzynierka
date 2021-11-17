@@ -18,12 +18,13 @@ class ProgramListFilters extends StatefulWidget {
 class _ProgramListFilters extends State<ProgramListFilters> {
   final List<ProgramModel>? _notFilteredList;
   final FiltersModel filters;
-  late final List<String?> availableChannels;
+  late final List<String?> availableChannels, availableGenres;
 
   _ProgramListFilters(this._notFilteredList, this.filters) {
-    availableChannels =
-        _notFilteredList!.map((e) => e.channelName).toSet().toList();
-    availableChannels.add(null);
+    availableChannels = _notFilteredList!.map((e) => e.channelName).toSet().toList();
+    var tmpSet = new Set<String?>();
+    _notFilteredList!.forEach((e) => tmpSet.addAll(e.genre));
+    availableGenres = tmpSet.toList();
   }
 
   @override
@@ -33,39 +34,75 @@ class _ProgramListFilters extends State<ProgramListFilters> {
         left: 12,
         right: 12,
         child: Container(
-          height: 290,
+          height: 320,
           decoration: new BoxDecoration(
               color: Colors.white, border: Border.all(color: Colors.black)),
           child: Column(
             children: [
               Padding(padding: EdgeInsets.only(bottom: 10.0)),
-              DropdownButton<String?>(
-                focusColor: Colors.white,
-                value: filters.channelName,
-                style: TextStyle(color: Colors.white),
-                iconEnabledColor: Colors.black,
-                items: availableChannels
-                    .map<DropdownMenuItem<String?>>((String? value) {
-                  return DropdownMenuItem<String?>(
-                    value: value,
-                    child: Text(
-                      value ?? "Choose channel",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  );
-                }).toList(),
-                hint: Text(
-                  "Choose channel",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
+              Container(
+                width: 150,
+                child: DropdownButton<String?>(
+                  isExpanded: true,
+                  focusColor: Colors.white,
+                  value: filters.genre,
+                  style: TextStyle(color: Colors.white),
+                  iconEnabledColor: Colors.black,
+                  items: availableGenres
+                      .map<DropdownMenuItem<String?>>((String? value) {
+                    return DropdownMenuItem<String?>(
+                      value: value,
+                      child: Text(
+                        value ?? "Choose genre",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    );
+                  }).toList(),
+                  hint: Text(
+                    "Choose genre",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  onChanged: (String? value) {
+                    setState(() {
+                      filters.genre = value;
+                    });
+                  },
                 ),
-                onChanged: (String? value) {
-                  setState(() {
-                    filters.channelName = value;
-                  });
-                },
+              ),
+              Container(
+                width: 150,
+                child: DropdownButton<String?>(
+                  isExpanded: true,
+                  focusColor: Colors.white,
+                  value: filters.channelName,
+                  style: TextStyle(color: Colors.white),
+                  iconEnabledColor: Colors.black,
+                  items: availableChannels
+                      .map<DropdownMenuItem<String?>>((String? value) {
+                    return DropdownMenuItem<String?>(
+                      value: value,
+                      child: Text(
+                        value ?? "Choose channel",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    );
+                  }).toList(),
+                  hint: Text(
+                    "Choose channel",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  onChanged: (String? value) {
+                    setState(() {
+                      filters.channelName = value;
+                    });
+                  },
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
