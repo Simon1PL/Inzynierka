@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:project/models/program_model.dart';
 import 'package:project/services/globals.dart';
+import 'package:project/services/settings_service.dart';
 import 'package:project/services/tuners_service.dart';
 
 import 'alert_service.dart';
@@ -130,6 +131,11 @@ Future<bool> postOrder(ProgramModel program, BuildContext context) async {
     }
     if (program.stop!.isBefore(DateTime.now())) {
       showSnackBar("Can't schedule, the program has already finished");
+      return false;
+    }
+    var freeSpace = await getFreeSpace();
+    if (freeSpace! - (program.stop!.millisecondsSinceEpoch - program.start!.millisecondsSinceEpoch)/1000/60 < freeSpace) {
+      showSnackBar("Can't schedule, not enough free space on disc");
       return false;
     }
     var body = jsonEncode([

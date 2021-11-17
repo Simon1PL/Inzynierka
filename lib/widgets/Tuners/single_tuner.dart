@@ -73,7 +73,7 @@ class _SingleTunerState extends State<SingleTuner> {
               padding: const EdgeInsets.all(8.0),
               child: Text("Tuner id: " + tunerModel.tunerId.toString()),
             ),
-            Padding(
+            if (tunerModel.currentUserRole == UserRoleForTuner.OWNER) Padding(
               padding: const EdgeInsets.only(top: 15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

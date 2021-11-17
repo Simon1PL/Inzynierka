@@ -15,6 +15,9 @@ class SettingsMenu extends StatelessWidget {
             case 2:
               logOff();
               break;
+            case 3:
+              Navigator.pushNamed(context, "/settings");
+              break;
           }
         },
         elevation: 20,
@@ -27,6 +30,12 @@ class SettingsMenu extends StatelessWidget {
                 ),
               ),
               PopupMenuItem(value: 1, child: TunerDropdown()),
+              PopupMenuItem(
+                value: 3,
+                child: Text(
+                  "Settings",
+                ),
+              ),
               PopupMenuItem(
                 value: 2,
                 child: Row(

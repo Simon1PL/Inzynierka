@@ -214,9 +214,8 @@ class ProgramListState extends State<ProgramList> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          filters.reset();
                           setState(() {
-                            filters;
+                            filters.reset();
                           });
                         },
                         child: Text("Reset filters"),
@@ -309,9 +308,8 @@ class ProgramListState extends State<ProgramList> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          filters.reset();
                           setState(() {
-                            filters;
+                            filters.reset();
                           });
                         },
                         child: Text("Reset filters"),
