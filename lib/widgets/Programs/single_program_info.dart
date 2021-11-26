@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:project/enums/favorite_type.dart';
 import 'package:project/models/program_model.dart';
+import 'package:project/services/db_service.dart';
 import 'package:project/services/favorite_service.dart';
 import 'package:project/services/programs_service.dart';
 import 'package:project/widgets/Programs/next_in_epg_list_item.dart';
@@ -52,11 +53,10 @@ class _SingleProgram extends State<SingleProgram> {
 
   loadNextInEpg() async {
     var nextInEpgTmp = (await getEpg())
-            ?.where((e) =>
+            .where((e) =>
                 program.title == e.title &&
                 (program.start != e.start || program.channelId != e.channelId))
-            .toList() ??
-        [];
+            .toList();
     setState(() {
       nextInEpg = nextInEpgTmp;
     });
@@ -78,8 +78,8 @@ class _SingleProgram extends State<SingleProgram> {
       program.favorite = fav1 ?? false;
     });
 
-    List<ProgramModel> scheduled = await getScheduled() ?? [];
-    scheduled.addAll(await getRecorded() ?? []);
+    List<ProgramModel> scheduled = await getScheduled();
+    scheduled.addAll(await getRecorded());
     if (scheduled
         .any((p) => p.title!.toLowerCase() == program.title!.toLowerCase())) {
       var p = scheduled.firstWhere(
@@ -160,20 +160,29 @@ class _SingleProgram extends State<SingleProgram> {
                               if (!program.favorite) {
                                 var res =
                                     await addFavorite(program.title ?? "");
-                                if (res == FavoriteType.EPISODE)
+                                if (res == FavoriteType.EPISODE) {
                                   setState(() {
                                     program.favorite = true;
                                   });
+                                  updateProgram(program);
+                                }
                                 else if (res == FavoriteType.TITLE) {
                                   setState(() {
                                     program.favorite2 = true;
                                   });
+                                  updateProgram(program);
                                 }
                               } else {
-                                if (await removeFavorite(program.title ?? ""))
+                                setState(() {
+                                  program.favorite = false;
+                                });
+                                updateProgram(program);
+                                if (!await removeFavorite(program.title ?? "")) {
                                   setState(() {
-                                    program.favorite = false;
+                                    program.favorite = true;
                                   });
+                                  updateProgram(program);
+                                }
                               }
                             },
                             child: Icon(
@@ -490,16 +499,29 @@ class _SingleProgram extends State<SingleProgram> {
                       if (program.alreadyScheduled && program.orderId == null)
                         return;
 
-                      if (program.alreadyScheduled &&
-                          await removeOrder(program.orderId!, context)) {
+                      if (program.alreadyScheduled) {
                         setState(() {
                           program.alreadyScheduled = false;
                         });
-                      } else if (!program.alreadyScheduled &&
-                          await postOrder(program, context)) {
+                        updateProgram(program);
+                        if (!await removeOrder(program.orderId!, context)) {
+                          setState(() {
+                            program.alreadyScheduled = true;
+                          });
+                          updateProgram(program);
+                        }
+                      }
+                      else {
                         setState(() {
                           program.alreadyScheduled = true;
                         });
+                        updateProgram(program);
+                        if (!await postOrder(program, context)) {
+                          setState(() {
+                            program.alreadyScheduled = false;
+                          });
+                          updateProgram(program);
+                        }
                       }
                     },
                     child: Icon(

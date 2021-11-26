@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/program_model.dart';
-import 'package:project/services/favorite_service.dart';
-import 'package:project/services/programs_service.dart';
+import 'package:project/services/db_service.dart';
 import 'package:project/widgets/Shared/app_bar_with_buttons.dart';
 import 'package:project/widgets/Programs/program_list.dart';
 import 'package:project/widgets/Shared/loader.dart';
@@ -27,31 +26,13 @@ class _Programs extends State<TvProgram> {
   @override
   void initState() {
     super.initState();
+    loadProgramsFromDb();
     loadEpg();
   }
 
   loadEpg() async {
-    List<ProgramModel>? programsTmp = await getEpg();
-    if (programsTmp == null) {
-      setState(() {
-        this.programs = null;
-        this.dataLoaded = true;
-      });
-      return;
-    }
-
-    programsTmp = await fillFavoritesDataInProgramList(programsTmp);
-
-    List<ProgramModel>? recorded = await getRecorded();
-    List<ProgramModel>? scheduled = await getScheduled();
-    List<ProgramModel> alreadySaved = [];
-    if (recorded != null) {
-      alreadySaved.addAll(recorded);
-    }
-
-    if (scheduled != null) {
-      alreadySaved.addAll(scheduled);
-    }
+    List<ProgramModel> programsTmp = await getEpg();
+    List<ProgramModel> alreadySaved = [...(await getRecorded()), ...(await getScheduled())];
 
     programsTmp
       .forEach((element) {

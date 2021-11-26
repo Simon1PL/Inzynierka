@@ -1,14 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:project/models/program_model.dart';
+import 'package:project/services/db_service.dart';
 import 'package:project/services/globals.dart';
-import 'package:project/services/settings_service.dart';
 import 'package:project/services/tuners_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'alert_service.dart';
 
-Future<List<ProgramModel>?> getEpg() async {
+Future<List<ProgramModel>?> loadEpgFromDb() async {
   try {
     Response response =
         await serverGet("epg?id=" + (await selectedTunerId).toString());
@@ -41,7 +44,7 @@ Future<List<ProgramModel>?> getEpg() async {
   }
 }
 
-Future<List<ProgramModel>?> getScheduled() async {
+Future<List<ProgramModel>?> loadScheduledFromDb() async {
   try {
     Response response =
         await serverGet("orders?id=" + (await selectedTunerId).toString());
@@ -78,7 +81,7 @@ Future<List<ProgramModel>?> getScheduled() async {
   }
 }
 
-Future<List<ProgramModel>?> getRecorded() async {
+Future<List<ProgramModel>?> loadRecordedFromDb() async {
   try {
     Response response =
         await serverGet("recorded?id=" + (await selectedTunerId).toString());
@@ -133,8 +136,7 @@ Future<bool> postOrder(ProgramModel program, BuildContext context) async {
       showSnackBar("Can't schedule, the program has already finished");
       return false;
     }
-    var freeSpace = await getFreeSpace();
-    if (freeSpace! - (program.stop!.millisecondsSinceEpoch - program.start!.millisecondsSinceEpoch)/1000/60 < freeSpace) {
+    if (!await isEnoughFreeSpace(program)) {
       showSnackBar("Can't schedule, not enough free space on disc");
       return false;
     }
@@ -180,4 +182,21 @@ Future<bool> removeOrder(int orderId, BuildContext context) async {
     showAlert(title: "Error", text: e.toString());
     return false;
   }
+}
+
+Future<bool> isEnoughFreeSpace(ProgramModel program) async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var freeSpace = pref.getInt("freeSpace");
+
+  var scheduled = await getScheduled();
+  var kbScheduled = 0.0;
+  scheduled.forEach((e) {
+    var kbPerSec = e.channelName!.toLowerCase().contains("hd") ? 4700 : 2900;
+    kbScheduled += (e.stop!.millisecondsSinceEpoch - (max(e.start!.millisecondsSinceEpoch, DateTime.now().millisecondsSinceEpoch))) / 1000 * kbPerSec;
+  });
+
+  var kbNeeded = program.stop!.millisecondsSinceEpoch - (max(program.start!.millisecondsSinceEpoch, DateTime.now().millisecondsSinceEpoch)) / 1000 * (program.channelName!.toLowerCase().contains("hd") ? 4700 : 2900);
+
+  return true; // TO DO, jednostka free space oraz zeby to była prawdziwa ilosc wolnego miejsca
+  return freeSpace == null ? true : freeSpace > kbScheduled + kbNeeded;
 }

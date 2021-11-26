@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/program_model.dart';
+import 'package:project/services/db_service.dart';
 import 'package:project/widgets/Home/recording_item.dart';
-import 'package:project/services/programs_service.dart';
 import 'package:project/widgets/Shared/loader.dart';
 
 class RecordingList extends StatefulWidget {
@@ -16,7 +16,7 @@ class _RecordingList extends State<RecordingList> {
   _RecordingList();
 
   Future<List<ProgramModel>> loadRecording() async {
-    var result = await getScheduled() ?? [];
+    var result = await getScheduled();
     result.sort((a,b) => a.start!.compareTo(b.start!));
     return result;
   }

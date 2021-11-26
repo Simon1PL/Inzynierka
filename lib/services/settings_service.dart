@@ -4,13 +4,12 @@ import 'package:project/models/settings_model.dart';
 import 'package:project/services/alert_service.dart';
 import 'package:project/services/globals.dart';
 import 'package:project/services/tuners_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<SettingsModel?> loadSettings() async {
   try {
     SettingsModel settings = new SettingsModel();
     var tunerId = await selectedTunerId;
-
-    settings.freeSpace = await getFreeSpace();
 
     var response = await serverGet("settings?id=$tunerId");
     if (response.statusCode != 200 && response.statusCode != 201) {
@@ -21,6 +20,11 @@ Future<SettingsModel?> loadSettings() async {
     var object = response.bodyBytes.isNotEmpty ? jsonDecode(utf8.decode(response.bodyBytes)) : response.bodyBytes;
     settings.recordingLocation = object["recording_location"];
     settings.tvhUsername = object["tvh_username"];
+    settings.freeSpace = object["free_space"];
+    if (settings.freeSpace != null) {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setInt("freeSpace", settings.freeSpace!);
+    }
     return settings;
   }
   catch (e) {
@@ -30,26 +34,29 @@ Future<SettingsModel?> loadSettings() async {
 }
 
 Future<bool> saveSettings(SettingsModel settings) async{
-  showSnackBar("Not implemented yet");
-  throw new UnimplementedError();
-}
-
-Future<int?> getFreeSpace() async {
   try {
-    var tunerId = await selectedTunerId;
-    Response response = await serverGet("status?id=$tunerId");
-
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception(response.statusCode.toString() + " - " +
-          utf8.decode(response.bodyBytes));
+    if (!settings.recordingLocation.endsWith("/")) {
+      settings.recordingLocation += "/";
     }
 
-    dynamic object = response.bodyBytes.isNotEmpty ? jsonDecode(
-        utf8.decode(response.bodyBytes)) : response.bodyBytes;
-    return object["free_space"];
+    var body = jsonEncode({
+      "free_space": null,
+      "recording_location": settings.recordingLocation,
+      "tvh_username": settings.tvhUsername,
+      "tvh_password": settings.tvhPassword,
+    });
+    Response response = await serverPost(
+        "settings?id=" + (await selectedTunerId).toString(), body);
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception(response.statusCode.toString() +
+          " - " +
+          utf8.decode(response.bodyBytes));
+    }
+    showSnackBar("Settings saved.");
+    return false;
   }
   catch (e) {
-    print(e);
-    return null;
+    showSnackBar("Can't save settings\n" + e.toString());
+    return false;
   }
 }

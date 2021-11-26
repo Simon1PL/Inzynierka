@@ -151,15 +151,15 @@ class NotificationService {
     pref.setInt("lastNotificationSetDate",
         (DateTime.now().add(Duration(days: 7)).millisecondsSinceEpoch));
     DateTime dateTo = DateTime.now().add(Duration(days: 7));
-    var programs = await getEpg() ?? [];
+    var programs = await loadEpgFromDb() ?? [];
     programs = programs
         .where((p) => p.start!.isAfter(dateFrom) && p.stop!.isBefore(dateTo))
         .toList();
     var favorites = await getFavorites();
     var favTitles = favorites[1] ?? [];
     var favEpisodes = favorites[0] ?? [];
-    var recordedOrScheduled = await getRecorded() ?? [];
-    recordedOrScheduled.addAll(await getScheduled() ?? []);
+    var recordedOrScheduled = await loadRecordedFromDb() ?? [];
+    recordedOrScheduled.addAll(await loadScheduledFromDb() ?? []);
     var notScheduled =
         programs.where((e) => !recordedOrScheduled.contains(e.title)).toList();
     notScheduled.shuffle();

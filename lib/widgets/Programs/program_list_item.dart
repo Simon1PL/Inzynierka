@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:project/enums/favorite_type.dart';
 import 'package:project/models/program_model.dart';
 import 'package:project/services/alert_service.dart';
+import 'package:project/services/db_service.dart';
 import 'package:project/widgets/Programs/single_program_info.dart';
 import 'package:project/services/favorite_service.dart';
 import 'package:project/services/programs_service.dart';
@@ -81,16 +82,29 @@ class _ProgramListItem extends State<ProgramListItem> {
                             return;
                           }
 
-                          if (model.alreadyScheduled &&
-                              await removeOrder(model.orderId!, context)) {
+                          if (model.alreadyScheduled) {
                             setState(() {
                               model.alreadyScheduled = false;
                             });
-                          } else if (!model.alreadyScheduled &&
-                              await postOrder(model, context)) {
+                            updateProgram(model);
+                            if (!await removeOrder(model.orderId!, context)) {
+                              setState(() {
+                                model.alreadyScheduled = true;
+                              });
+                              updateProgram(model);
+                            }
+                          }
+                          else {
                             setState(() {
                               model.alreadyScheduled = true;
                             });
+                            updateProgram(model);
+                            if (!await postOrder(model, context)) {
+                              setState(() {
+                                model.alreadyScheduled = false;
+                              });
+                              updateProgram(model);
+                            }
                           }
                         },
                         child: Icon(
@@ -187,20 +201,25 @@ class _ProgramListItem extends State<ProgramListItem> {
                         onTap: () async {
                           if (!model.favorite) {
                             var res = await addFavorite(model.title ?? "");
-                            if (res == FavoriteType.EPISODE)
+                            if (res == FavoriteType.EPISODE) {
                               setState(() {
                                 model.favorite = true;
                               });
+                              updateProgram(model);
+                            }
                             else if (res == FavoriteType.TITLE) {
                               setState(() {
                                 model.favorite2 = true;
                               });
+                              updateProgram(model);
                             }
                           } else {
-                            if (await removeFavorite(model.title ?? ""))
+                            if (await removeFavorite(model.title ?? "")) {
                               setState(() {
                                 model.favorite = false;
                               });
+                              updateProgram(model);
+                            }
                           }
                         },
                         child: Icon(

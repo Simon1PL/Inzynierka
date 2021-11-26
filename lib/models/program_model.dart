@@ -1,9 +1,20 @@
+import 'package:isar/isar.dart';
+import 'package:project/enums/isar_collection.dart';
+
+@Collection()
 class ProgramModel {
+  @Id()
+  int? id;
+  // property for isar db, cause i don't know how to make few collections of same type in isar
+  @IsarCollectionTypeConverter()
+  IsarCollectionType isarCollectionType = IsarCollectionType.NONE;
+
   int? orderId;
   String? channelName;
   String? channelId;
   DateTime? start;
   DateTime? stop;
+  @Index(indexType: IndexType.words)
   String? title;
   String? subtitle;
   String? description;

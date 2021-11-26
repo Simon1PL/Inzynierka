@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/program_model.dart';
-import 'package:project/services/favorite_service.dart';
-import 'package:project/services/programs_service.dart';
+import 'package:project/services/db_service.dart';
 import 'package:project/widgets/Shared/app_bar_with_buttons.dart';
 import 'package:project/widgets/Programs/program_list.dart';
 import 'package:project/widgets/Shared/loader.dart';
@@ -23,17 +22,8 @@ class _Recordings extends State<Recorded> {
   }
 
   loadRecorded() async {
-    List<ProgramModel>? programsTmp = await getRecorded();
-    if (programsTmp == null) {
-      setState(() {
-        this.programs = null;
-        this.dataLoaded = true;
-      });
-      return;
-    }
+    List<ProgramModel> programsTmp = await getRecorded();
 
-    programsTmp = await fillFavoritesDataInProgramList(programsTmp);
-    
     setState(() {
       this.programs = programsTmp;
       this.dataLoaded = true;

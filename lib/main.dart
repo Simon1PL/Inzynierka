@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/services/db_service.dart';
 import 'package:project/services/notifications_service.dart';
 import 'package:project/widgets/Favorites/favorites.dart';
 import 'package:project/widgets/Programs/single_program_info.dart';
@@ -13,6 +14,7 @@ import 'package:project/widgets/Tuners/tuners.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await DbService().init();
   var program = await NotificationService().init();
   NotificationService().requestIOSPermissions();
   NotificationService().scheduleProgramNotifications();

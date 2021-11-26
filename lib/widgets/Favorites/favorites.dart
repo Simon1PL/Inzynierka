@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project/models/program_model.dart';
+import 'package:project/services/db_service.dart';
 import 'package:project/services/favorite_service.dart';
-import 'package:project/services/programs_service.dart';
 import 'package:project/widgets/Favorites/favorite_titles.dart';
 import 'package:project/widgets/Shared/app_bar_with_buttons.dart';
 import 'package:project/widgets/Programs/program_list.dart';
@@ -46,21 +46,7 @@ class _Programs extends State<Favorites> {
       return;
     }
 
-    List<ProgramModel>? recorded = await getRecorded();
-    List<ProgramModel>? scheduled = await getScheduled();
-    List<ProgramModel>? epg = await getEpg();
-    List<ProgramModel> programsTmp = [];
-    if (recorded != null) {
-      programsTmp.addAll(recorded);
-    }
-
-    if (scheduled != null) {
-      programsTmp.addAll(scheduled);
-    }
-
-    if (epg != null) {
-      programsTmp.addAll(epg);
-    }
+    List<ProgramModel> programsTmp = await getPrograms();
 
     favorites.sort((a, b) => a.toString().compareTo(b.toString()));
     var favoritePrograms = favorites.map((e) {
