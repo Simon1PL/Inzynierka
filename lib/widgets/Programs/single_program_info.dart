@@ -97,6 +97,13 @@ class _SingleProgram extends State<SingleProgram> {
     }
   }
 
+  void refreshProgram() async {
+    loadFav();
+    setState(() {
+      program = program;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,7 +162,7 @@ class _SingleProgram extends State<SingleProgram> {
                               ),
                             ),
                           ),
-                          FavoriteIcon(program)
+                          FavoriteIcon(program, refreshProgram)
                         ],
                       ),
                       Expanded(

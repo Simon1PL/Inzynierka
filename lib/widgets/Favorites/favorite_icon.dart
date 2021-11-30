@@ -6,17 +6,19 @@ import 'package:project/services/favorite_service.dart';
 
 class FavoriteIcon extends StatefulWidget {
   final ProgramModel program;
+  final Function() refreshParent;
 
-  FavoriteIcon(this.program);
+  FavoriteIcon(this.program, this.refreshParent);
 
   @override
-  _FavoriteIcon createState() => _FavoriteIcon(program);
+  _FavoriteIcon createState() => _FavoriteIcon(program, refreshParent);
 }
 
 class _FavoriteIcon extends State<FavoriteIcon> {
   final ProgramModel program;
+  final Function() refreshParent;
 
-  _FavoriteIcon(this.program);
+  _FavoriteIcon(this.program, this.refreshParent);
 
   @override
   void initState() {
@@ -38,6 +40,7 @@ class _FavoriteIcon extends State<FavoriteIcon> {
             setState(() {
               program.favorite2 = true;
             });
+            refreshParent();
           }
         } else {
           if (await removeFavorite(program.title!)) {
@@ -46,7 +49,7 @@ class _FavoriteIcon extends State<FavoriteIcon> {
             });
           }
         }
-        updateProgram(program);
+        await updateProgram(program);
       },
       child: Icon(
         program.favorite

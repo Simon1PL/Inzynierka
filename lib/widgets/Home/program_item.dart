@@ -31,6 +31,12 @@ class _ProgramHomeItem extends State<ProgramHomeItem> {
     }
   }
 
+  void refreshProgram() async {
+    setState(() {
+      model;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -76,7 +82,7 @@ class _ProgramHomeItem extends State<ProgramHomeItem> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ScheduleIcon(model),
-                      FavoriteIcon(model)
+                      FavoriteIcon(model, refreshProgram)
                     ],
                   ),
                   Column(

@@ -3,6 +3,7 @@ import 'package:project/models/program_model.dart';
 import 'package:project/services/alert_service.dart';
 import 'package:project/services/db_service.dart';
 import 'package:project/services/programs_service.dart';
+import 'package:project/widgets/Shared/loader.dart';
 
 class ScheduleIcon extends StatefulWidget {
   final ProgramModel program;
@@ -15,6 +16,7 @@ class ScheduleIcon extends StatefulWidget {
 
 class _ScheduleIcon extends State<ScheduleIcon> {
   final ProgramModel program;
+  bool loading = false;
 
   _ScheduleIcon(this.program);
 
@@ -23,49 +25,48 @@ class _ScheduleIcon extends State<ScheduleIcon> {
     super.initState();
   }
 
-  void tryRemoveOrder() async {
+  Future<void> tryRemoveOrder() async {
     if (program.stop!.isBefore(DateTime.now())) {
       showSnackBar("Can't remove order, the program has already ended");
       return;
     }
-    if (!await removeOrder(program.orderId!)) {
-      setState(() {
-        program.alreadyScheduled = true;
-      });
-    }
-    updateProgram(program);
-  }
-
-  void tryPostOrder() async {
-    if (!await postOrder(program)) {
+    if (await removeOrder(program.orderId!)) {
       setState(() {
         program.alreadyScheduled = false;
       });
+      await updateProgram(program);
     }
-    else {
+  }
+
+  Future<void> tryPostOrder() async {
+    if (await postOrder(program)) {
       setState(() {
+        program.alreadyScheduled = true;
         program.orderId = program.orderId;
       });
+      await updateProgram(program);
     }
-    updateProgram(program);
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        DbService().lastProgramsDbModificationDate = DateTime.now().millisecondsSinceEpoch;
         setState(() {
-          program.orderId = program.alreadyScheduled ? program.orderId : -1; // set order id to -1 before getting real order id from BE cause order id == null means program is already recorded
-          program.alreadyScheduled = !program.alreadyScheduled;
+          loading = true;
         });
-        if (!program.alreadyScheduled) {
-          tryRemoveOrder();
+        if (program.alreadyScheduled) {
+          await tryRemoveOrder();
         }
         else {
-          tryPostOrder();
+          await tryPostOrder();
         }
+        setState(() {
+          loading = false;
+        });
       },
-      child: Icon(
+      child: loading ? Loader(30) : Icon(
         program.alreadyScheduled
             ? Icons.alarm_off
             : Icons.alarm,

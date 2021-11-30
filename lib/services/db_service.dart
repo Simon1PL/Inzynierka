@@ -103,13 +103,13 @@ Future<bool> loadProgramsFromDb([bool recursive = false]) async {
     await removePrograms(oldProgramsIds.cast<int>());
     print("DATA FROM SERVER LOADED");
     if (recursive) {
-      Timer(Duration(seconds: 15), () => loadProgramsFromDb(true));
+      Timer(Duration(seconds: 2), () => loadProgramsFromDb(true));
     }
     return true;
   }
 
   if (recursive) {
-    Timer(Duration(seconds: 10), () => loadProgramsFromDb(true));
+    Timer(Duration(seconds: 2), () => loadProgramsFromDb(true));
   }
   return false;
 }

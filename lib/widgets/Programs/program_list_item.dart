@@ -15,8 +15,14 @@ class ProgramListItem extends StatefulWidget {
 }
 
 class _ProgramListItem extends State<ProgramListItem> {
-  final ProgramModel model;
+  ProgramModel model;
   _ProgramListItem(this.model);
+
+  void refreshProgram() async {
+    setState(() {
+      model = model;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +155,7 @@ class _ProgramListItem extends State<ProgramListItem> {
                               ],
                             )
                           : SizedBox.shrink(),
-                      FavoriteIcon(model)
+                      FavoriteIcon(model, refreshProgram)
                     ],
                   ),
                 ],
