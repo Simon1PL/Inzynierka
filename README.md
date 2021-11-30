@@ -17,6 +17,6 @@
 
 ### Links:
 - [backend](https://github.com/pawel00100/Tuner) - application on device with tuner
-- [server](https://github.com/what-ewer/Remotely-Managed-DVB-T-Tuner-backend) - middleware between backend and frontend
+- [server](https://github.com/what-ewer/Remotely-Managed-DVB-T-Tuner-backend), [server on heroku](https://github.com/Simon1PL/inzynierka_server) - middleware between backend and frontend
 - [frontend](https://github.com/Simon1PL/Inzynierka) - mobile app
 - [flutter documentation](https://flutter.dev/docs)
