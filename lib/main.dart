@@ -10,6 +10,7 @@ import 'package:project/widgets/Recordings/scheduled.dart';
 import 'package:project/widgets/Home/home.dart';
 import 'package:project/widgets/Recordings/recorded.dart';
 import 'package:project/widgets/Settings/settings.dart';
+import 'package:project/widgets/Shared/loader.dart';
 import 'package:project/widgets/Tuners/tuners.dart';
 
 Future<void> main() async {
@@ -29,6 +30,7 @@ Future<void> main() async {
       Home.routeName: (context) => Home(),
       Login.routeName: (context) => Login(),
       '/tuners': (context) => Tuners(),
+      '/loader': (context) => Loader(),
       '/settings': (context) => Settings(),
       '/programs/tv_program': (context) => TvProgram(),
       '/programs/favorites': (context) => Favorites(),

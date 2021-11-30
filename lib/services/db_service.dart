@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:isar/isar.dart';
 import 'package:project/enums/isar_collection.dart';
 import 'package:project/isar.g.dart';
@@ -13,6 +15,8 @@ class DbService {
   //Singleton pattern
   static final DbService _dbService = DbService._internal();
   late final Isar isar;
+  int lastProgramsDbModificationDate = 0;
+  bool isLoadingProgramsFromDb = false;
 
   factory DbService() {
     return _dbService;
@@ -20,18 +24,37 @@ class DbService {
 
   DbService._internal();
 
-  Future init() async {
+  Future<bool> init() async {
     isar = await openIsar();
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    var wasNeverLoaded = pref.getBool("isLoadingProgramsFromDb") == null;
-    if (wasNeverLoaded) await loadProgramsFromDb();
-    else loadProgramsFromDb();
+    return true;
   }
 }
 
 Future<void> updateProgram(ProgramModel program) async {
-  await DbService().isar.writeTxn((isar) => isar.programModels.where().filter().channelIdEqualTo(program.channelId).and().startEqualTo(program.start).deleteFirst());
-  await DbService().isar.writeTxn((isar) => isar.programModels.put(program));
+  DbService().lastProgramsDbModificationDate = DateTime.now().millisecondsSinceEpoch;
+
+  var sameFromEpg = await DbService().isar.programModels.where().filter().channelIdEqualTo(program.channelId).and().startEqualTo(program.start).and().isarCollectionTypeEqualTo(IsarCollectionType.EPG).findFirst();
+
+  await DbService().isar.writeTxn((isar) => isar.programModels.where().filter().channelIdEqualTo(program.channelId).and().startEqualTo(program.start).deleteAll());
+
+  if (program.alreadyScheduled && program.orderId != null) {
+    program.id = null;
+    program.isarCollectionType = IsarCollectionType.SCHEDULED;
+    await DbService().isar.writeTxn((isar) => isar.programModels.put(program));
+    print(program.id);
+  }
+  if (program.alreadyScheduled && program.orderId == null) {
+    program.id = null;
+    program.isarCollectionType = IsarCollectionType.RECORDED;
+    await DbService().isar.writeTxn((isar) => isar.programModels.put(program));
+  }
+  if (sameFromEpg != null) {
+    program.id = sameFromEpg.id;
+    program.isarCollectionType = IsarCollectionType.EPG;
+    await DbService().isar.writeTxn((isar) => isar.programModels.put(program));
+  }
+
+  DbService().lastProgramsDbModificationDate = DateTime.now().millisecondsSinceEpoch;
 }
 
 Future<void> savePrograms(List<ProgramModel> programs) async {
@@ -58,13 +81,12 @@ Future<List<ProgramModel>> getRecorded() async {
   return await DbService().isar.programModels.where().filter().isarCollectionTypeEqualTo(IsarCollectionType.RECORDED).findAll();
 }
 
-Future<void> loadProgramsFromDb() async {
-  SharedPreferences pref = await SharedPreferences.getInstance();
-  var isLoading = pref.getBool("isLoadingProgramsFromDb");
-  if (isLoading == true) return;
+Future<bool> loadProgramsFromDb() async {
+  print("LOADING DATA FROM SERVER");
+  if (DbService().isLoadingProgramsFromDb == true) return false;
 
-  pref.setBool("isLoadingProgramsFromDb", true);
-
+  DbService().isLoadingProgramsFromDb = true;
+  var loadProgramsDate = DateTime.now().millisecondsSinceEpoch;
   var oldProgramsIds = await DbService().isar.programModels.where().idProperty().findAll();
   List<ProgramModel> epg = await loadEpgFromDb() ?? [];
   epg.forEach((e)=>e.isarCollectionType = IsarCollectionType.EPG);
@@ -74,8 +96,17 @@ Future<void> loadProgramsFromDb() async {
   scheduled.forEach((e)=>e.isarCollectionType = IsarCollectionType.SCHEDULED);
   var programs = [...recorded, ...scheduled, ...epg];
   programs = await fillFavoritesDataInProgramList(programs);
-  savePrograms(programs);
-  removePrograms(oldProgramsIds.cast<int>());
 
-  pref.setBool("isLoadingProgramsFromDb", false);
+  if (DbService().lastProgramsDbModificationDate < loadProgramsDate) {
+    await savePrograms(programs);
+    await removePrograms(oldProgramsIds.cast<int>());
+    DbService().isLoadingProgramsFromDb = false;
+    Timer(Duration(seconds: 10), () => loadProgramsFromDb());
+    print("DATA FROM SERVER LOADED");
+    return true;
+  }
+
+  DbService().isLoadingProgramsFromDb = false;
+  loadProgramsFromDb();
+  return false;
 }

@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:project/models/program_model.dart';
@@ -8,7 +6,6 @@ import 'package:project/services/db_service.dart';
 import 'package:project/services/globals.dart';
 import 'package:project/services/tuners_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'alert_service.dart';
 
 Future<List<ProgramModel>?> loadEpgFromDb() async {
@@ -126,7 +123,7 @@ Future<List<ProgramModel>?> loadRecordedFromDb() async {
   }
 }
 
-Future<bool> postOrder(ProgramModel program, BuildContext context) async {
+Future<bool> postOrder(ProgramModel program) async {
   try {
     if (program.start == null || program.stop == null) {
       showSnackBar("There is no " + program.title! + " in current epg");
@@ -140,6 +137,7 @@ Future<bool> postOrder(ProgramModel program, BuildContext context) async {
       showSnackBar("Can't schedule, not enough free space on disc");
       return false;
     }
+
     var body = jsonEncode([
       {
         "channel_id": program.channelId,
@@ -160,12 +158,18 @@ Future<bool> postOrder(ProgramModel program, BuildContext context) async {
     program.orderId = object["ids"][0];
     return true;
   } catch (e) {
-    showAlert(title: "Can't schedule program", text: e.toString());
+    if (e.toString().contains("Orders are overlapping")) {
+      showSnackBar("Can't schedule program, another program is scheduled at the same time");
+    }
+    else {
+      print(e);
+      showSnackBar("Some error occurs, can't schedule program");
+    }
     return false;
   }
 }
 
-Future<bool> removeOrder(int orderId, BuildContext context) async {
+Future<bool> removeOrder(int orderId) async {
   try {
     Response response = await serverDelete("orders?tuner_id=" +
         (await selectedTunerId).toString() +
@@ -179,7 +183,8 @@ Future<bool> removeOrder(int orderId, BuildContext context) async {
 
     return true;
   } catch (e) {
-    showAlert(title: "Error", text: e.toString());
+    print(e);
+    showSnackBar("Some error occurs, can't remove program from scheduled");
     return false;
   }
 }

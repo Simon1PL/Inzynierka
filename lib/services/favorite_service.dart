@@ -60,12 +60,6 @@ Future<FavoriteType?> addFavorite(String favorite,
         "&series=" +
         favoriteType.index.toString());
     if (response.statusCode != 200 && response.statusCode != 201) {
-      if (response.statusCode == 400 &&
-          response.bodyBytes.contains("already added")) {
-        showSnackBar("$favorite is already in favorites");
-        return favoriteType;
-      }
-
       throw Exception(response.statusCode.toString() +
           " - " +
           utf8.decode(response.bodyBytes));
@@ -74,10 +68,11 @@ Future<FavoriteType?> addFavorite(String favorite,
     NotificationService().afterFavoriteChangeRefreshNotification();
     return favoriteType;
   } catch (e) {
-    if (e.toString().contains("Favorite already added")) {
-      showSnackBar("Can't add, favorite already exists");
+    if (e.toString().contains("already added")) {
+      showSnackBar("$favorite is already in favorites");
+      return favoriteType;
     } else {
-      showSnackBar("Can't add favorite");
+      showSnackBar("Some error occurs, can't add favorite");
       print(e);
     }
     return null;
@@ -99,7 +94,8 @@ Future<bool> removeFavorite(String favorite,
 
     return true;
   } catch (e) {
-    showAlert(title: "Can't remove favorite", text: e.toString());
+    print(e);
+    showSnackBar("Some error occurs, can't remove favorite");
     return false;
   }
 }

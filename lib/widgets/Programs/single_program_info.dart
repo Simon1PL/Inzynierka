@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:project/enums/favorite_type.dart';
 import 'package:project/models/program_model.dart';
 import 'package:project/services/db_service.dart';
 import 'package:project/services/favorite_service.dart';
-import 'package:project/services/programs_service.dart';
+import 'package:project/widgets/Favorites/favorite_icon.dart';
 import 'package:project/widgets/Programs/next_in_epg_list_item.dart';
+import 'package:project/widgets/Recordings/schedule_icon.dart';
 import 'package:project/widgets/Shared/app_bar.dart';
 import 'package:project/widgets/Shared/loader.dart';
 import 'package:project/widgets/Shared/menu.dart';
@@ -155,45 +155,7 @@ class _SingleProgram extends State<SingleProgram> {
                               ),
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () async {
-                              if (!program.favorite) {
-                                var res =
-                                    await addFavorite(program.title ?? "");
-                                if (res == FavoriteType.EPISODE) {
-                                  setState(() {
-                                    program.favorite = true;
-                                  });
-                                  updateProgram(program);
-                                }
-                                else if (res == FavoriteType.TITLE) {
-                                  setState(() {
-                                    program.favorite2 = true;
-                                  });
-                                  updateProgram(program);
-                                }
-                              } else {
-                                setState(() {
-                                  program.favorite = false;
-                                });
-                                updateProgram(program);
-                                if (!await removeFavorite(program.title ?? "")) {
-                                  setState(() {
-                                    program.favorite = true;
-                                  });
-                                  updateProgram(program);
-                                }
-                              }
-                            },
-                            child: Icon(
-                              program.favorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              size: 30,
-                              color:
-                                  program.favorite ? Colors.blue : Colors.black,
-                            ),
-                          ),
+                          FavoriteIcon(program)
                         ],
                       ),
                       Expanded(
@@ -494,48 +456,7 @@ class _SingleProgram extends State<SingleProgram> {
                 Positioned(
                   top: 0,
                   left: 0,
-                  child: GestureDetector(
-                    onTap: () async {
-                      if (program.alreadyScheduled && program.orderId == null)
-                        return;
-
-                      if (program.alreadyScheduled) {
-                        setState(() {
-                          program.alreadyScheduled = false;
-                        });
-                        updateProgram(program);
-                        if (!await removeOrder(program.orderId!, context)) {
-                          setState(() {
-                            program.alreadyScheduled = true;
-                          });
-                          updateProgram(program);
-                        }
-                      }
-                      else {
-                        setState(() {
-                          program.alreadyScheduled = true;
-                        });
-                        updateProgram(program);
-                        if (!await postOrder(program, context)) {
-                          setState(() {
-                            program.alreadyScheduled = false;
-                          });
-                          updateProgram(program);
-                        }
-                      }
-                    },
-                    child: Icon(
-                      program.alreadyScheduled ? Icons.alarm_off : Icons.alarm,
-                      color: (program.alreadyScheduled &&
-                                  program.orderId == null) ||
-                              program.start == null
-                          ? Colors.grey
-                          : program.alreadyScheduled
-                              ? Colors.blue
-                              : Colors.black,
-                      size: 30,
-                    ),
-                  ),
+                  child: ScheduleIcon(program)
                 ),
               ],
             ),

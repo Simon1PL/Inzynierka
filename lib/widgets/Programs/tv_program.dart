@@ -26,7 +26,6 @@ class _Programs extends State<TvProgram> {
   @override
   void initState() {
     super.initState();
-    loadProgramsFromDb();
     loadEpg();
   }
 
@@ -79,7 +78,7 @@ class _Programs extends State<TvProgram> {
         ),
       ], 1),
       body: dataLoaded
-          ? ProgramList(programs, "Something went wrong, can not get EPG")
+          ? ProgramList(programs, "Something went wrong, can not get EPG", false)
           : Loader(),
       bottomNavigationBar: Menu(currentIndex: 2),
     );

@@ -8,12 +8,13 @@ import 'package:project/widgets/Programs/program_list_item.dart';
 class ProgramList extends StatefulWidget {
   final List<ProgramModel>? _list;
   final String _errorText;
+  final bool _showPast;
 
-  ProgramList(this._list, this._errorText);
+  ProgramList(this._list, this._errorText, [this._showPast = true]);
 
   @override
   ProgramListState createState() =>
-      ProgramListState(this._list, this._errorText);
+      ProgramListState(this._list, this._errorText, this._showPast);
 }
 
 class ProgramListState extends State<ProgramList> {
@@ -24,7 +25,11 @@ class ProgramListState extends State<ProgramList> {
   final filters = FiltersModel();
   bool openFilters = false;
 
-  ProgramListState(this._list, this._errorText) {
+  ProgramListState(this._list, this._errorText, _showPast) {
+    this.filters.showPast = _showPast;
+    if (_showPast == false) {
+      _list = _list!.where((e) => e.stop!.isAfter(DateTime.now())).toList();
+    }
     if (_list != null) {
       _notFilteredList = new List<ProgramModel>.from(_list!);
     }

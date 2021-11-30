@@ -61,7 +61,7 @@ class FavoriteAlertState extends State<FavoriteAlert> {
         TextField(
           textInputAction: TextInputAction.next,
           controller: _titleController,
-          autofocus: true,
+          autofocus: false,
           decoration: InputDecoration(
             isDense: true,
             border: InputBorder.none,

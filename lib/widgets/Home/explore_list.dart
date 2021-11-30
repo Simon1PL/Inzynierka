@@ -16,7 +16,6 @@ class _ExploreList extends State<ExploreList> {
   @override
   void initState() {
     super.initState();
-    loadProgramsFromDb();
   }
 
   Future<List<ProgramModel>> loadExplore() async {

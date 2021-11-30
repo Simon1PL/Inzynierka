@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:project/enums/favorite_type.dart';
 import 'package:project/models/program_model.dart';
-import 'package:project/services/alert_service.dart';
-import 'package:project/services/db_service.dart';
+import 'package:project/widgets/Favorites/favorite_icon.dart';
 import 'package:project/widgets/Programs/single_program_info.dart';
-import 'package:project/services/favorite_service.dart';
-import 'package:project/services/programs_service.dart';
+import 'package:project/widgets/Recordings/schedule_icon.dart';
 
 class ProgramListItem extends StatefulWidget {
   final ProgramModel model;
@@ -75,52 +72,7 @@ class _ProgramListItem extends State<ProgramListItem> {
                               : SizedBox.shrink(),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () async {
-                          if (model.alreadyScheduled && model.orderId == null) {
-                            showSnackBar("Can't remove order, program is saved on disc");
-                            return;
-                          }
-
-                          if (model.alreadyScheduled) {
-                            setState(() {
-                              model.alreadyScheduled = false;
-                            });
-                            updateProgram(model);
-                            if (!await removeOrder(model.orderId!, context)) {
-                              setState(() {
-                                model.alreadyScheduled = true;
-                              });
-                              updateProgram(model);
-                            }
-                          }
-                          else {
-                            setState(() {
-                              model.alreadyScheduled = true;
-                            });
-                            updateProgram(model);
-                            if (!await postOrder(model, context)) {
-                              setState(() {
-                                model.alreadyScheduled = false;
-                              });
-                              updateProgram(model);
-                            }
-                          }
-                        },
-                        child: Icon(
-                          model.alreadyScheduled
-                              ? Icons.alarm_off
-                              : Icons.alarm,
-                          color: (model.alreadyScheduled &&
-                                      model.orderId == null) ||
-                                  model.start == null
-                              ? Colors.grey
-                              : model.alreadyScheduled
-                                  ? Colors.blue
-                                  : Colors.black,
-                          size: 30,
-                        ),
-                      ),
+                      ScheduleIcon(model)
                     ],
                   ),
                   model.fileName != null
@@ -197,39 +149,7 @@ class _ProgramListItem extends State<ProgramListItem> {
                               ],
                             )
                           : SizedBox.shrink(),
-                      GestureDetector(
-                        onTap: () async {
-                          if (!model.favorite) {
-                            var res = await addFavorite(model.title ?? "");
-                            if (res == FavoriteType.EPISODE) {
-                              setState(() {
-                                model.favorite = true;
-                              });
-                              updateProgram(model);
-                            }
-                            else if (res == FavoriteType.TITLE) {
-                              setState(() {
-                                model.favorite2 = true;
-                              });
-                              updateProgram(model);
-                            }
-                          } else {
-                            if (await removeFavorite(model.title ?? "")) {
-                              setState(() {
-                                model.favorite = false;
-                              });
-                              updateProgram(model);
-                            }
-                          }
-                        },
-                        child: Icon(
-                          model.favorite
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          size: 30,
-                          color: model.favorite ? Colors.blue : Colors.black,
-                        ),
-                      ),
+                      FavoriteIcon(model)
                     ],
                   ),
                 ],
