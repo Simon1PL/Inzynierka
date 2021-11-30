@@ -202,5 +202,5 @@ Future<bool> isEnoughFreeSpace(ProgramModel program) async {
 
   var kbNeeded = program.stop!.millisecondsSinceEpoch - (max(program.start!.millisecondsSinceEpoch, DateTime.now().millisecondsSinceEpoch)) / 1000 * (program.channelName!.toLowerCase().contains("hd") ? 4700 : 2900);
 
-  return freeSpace == null ? true : (freeSpace / 128) > kbScheduled + kbNeeded;
+  return freeSpace == null ? true : (freeSpace / 128) > kbScheduled + kbNeeded; // free space [B], needs [kb]
 }
