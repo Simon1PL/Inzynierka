@@ -8,6 +8,7 @@ import 'package:project/models/program_model.dart';
 import 'package:project/services/alert_service.dart';
 import 'package:project/services/favorite_service.dart';
 import 'package:project/services/globals.dart';
+import 'package:project/services/login_service.dart';
 import 'package:project/services/programs_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -85,6 +86,10 @@ Future<List<ProgramModel>> getRecorded() async {
 }
 
 Future<bool> loadProgramsFromDb([bool recursive = false]) async {
+  if (recursive && !await isLoggedIn) {
+    Timer(Duration(seconds: 2), () => loadProgramsFromDb(true));
+    return false;
+  }
   print("LOADING DATA FROM SERVER");
   var loadProgramsDate = DateTime.now().millisecondsSinceEpoch;
   DbService().lastProgramsDbModificationDate = loadProgramsDate - 1;
@@ -101,6 +106,7 @@ Future<bool> loadProgramsFromDb([bool recursive = false]) async {
   if (!recursive || DbService().lastProgramsDbModificationDate < loadProgramsDate) {
     await savePrograms(programs);
     await removePrograms(oldProgramsIds.cast<int>());
+    DbService().lastProgramsDbModificationDate = DateTime.now().millisecondsSinceEpoch;
     print("DATA FROM SERVER LOADED");
     if (recursive) {
       Timer(Duration(seconds: 2), () => loadProgramsFromDb(true));
@@ -115,6 +121,7 @@ Future<bool> loadProgramsFromDb([bool recursive = false]) async {
 }
 
 dataFromServerRequired([String alertText = "Loading data from server, please wait..."]) async {
+  print("WAIT FOR DATA FROM SERVER");
   SharedPreferences pref = await SharedPreferences.getInstance();
   pref.setBool("needsDataFromServer", true);
   showLoadingDataFromServerAlert(alertText);
