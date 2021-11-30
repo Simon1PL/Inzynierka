@@ -44,7 +44,7 @@ Future<void> clearTuners() async {
   pref.remove("selectedTunerId");
 }
 
-Future<bool> loadTunersFromServer() async {
+Future<bool> loadTunersFromServer([bool requiredReloadData = false]) async {
   try{
     Response response = await serverGet("tuner/list");
     if (response.statusCode != 200 && response.statusCode != 201) {
@@ -56,7 +56,7 @@ Future<bool> loadTunersFromServer() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setStringList("tuners", tuners.map((t) => json.encode(t.toJson())).toList());
     var accepted = await acceptedTuners;
-    accepted.isNotEmpty ? pref.setInt("selectedTunerId", accepted[0].tunerId) : pref.remove("selectedTunerId");
+    accepted.isNotEmpty ? !requiredReloadData ? pref.setInt("selectedTunerId", accepted[0].tunerId) : await setSelectedTunerId(accepted[0].tunerId.toString()) : pref.remove("selectedTunerId");
     return true;
   }
   catch (e) {
