@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:project/models/program_model.dart';
 import 'package:project/widgets/Favorites/favorite_icon.dart';
 import 'package:project/widgets/Programs/single_program_info.dart';
+import 'package:project/widgets/Recordings/schedule_icon.dart';
 
 class ProgramHomeItem extends StatefulWidget {
   final ProgramModel model;
@@ -74,7 +75,7 @@ class _ProgramHomeItem extends State<ProgramHomeItem> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-
+                      ScheduleIcon(model),
                       FavoriteIcon(model)
                     ],
                   ),

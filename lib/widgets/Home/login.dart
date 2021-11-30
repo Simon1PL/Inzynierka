@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project/services/db_service.dart';
 import 'package:project/services/login_service.dart';
 import 'package:project/widgets/Shared/app_bar.dart';
 import 'package:project/widgets/Shared/loader.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
 

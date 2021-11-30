@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/tuner_model.dart';
-import 'package:project/services/db_service.dart';
 import 'package:project/services/globals.dart';
 import 'package:project/services/tuners_service.dart';
 
@@ -40,15 +39,10 @@ class TunerDropdownState extends State<TunerDropdown> {
         color: Colors.blue,
       ),
       onChanged: (String? newValue) async {
-        await setSelectedTunerId(newValue);
         setState(() {
           tunerId = newValue;
         });
-        if (activeTab != null) {
-          Navigator.pushNamed(
-              context, "/loader");
-        }
-        await loadProgramsFromDb();
+        await setSelectedTunerId(newValue);
         if (activeTab != null) {
           Navigator.pushNamedAndRemoveUntil(
               context, activeTab!, (route) => false);

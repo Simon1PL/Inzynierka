@@ -35,6 +35,7 @@ Future<void> setSelectedTunerId(String? tunerId) async {
   if (tunerId == null) return;
   SharedPreferences pref = await SharedPreferences.getInstance();
   pref.setInt("selectedTunerId", int.parse(tunerId));
+  await dataFromServerRequired();
 }
 
 Future<void> clearTuners() async {

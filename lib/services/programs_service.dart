@@ -158,11 +158,11 @@ Future<bool> postOrder(ProgramModel program) async {
     program.orderId = object["ids"][0];
     return true;
   } catch (e) {
+    print(e);
     if (e.toString().contains("Orders are overlapping")) {
       showSnackBar("Can't schedule program, another program is scheduled at the same time");
     }
     else {
-      print(e);
       showSnackBar("Some error occurs, can't schedule program");
     }
     return false;
@@ -202,6 +202,5 @@ Future<bool> isEnoughFreeSpace(ProgramModel program) async {
 
   var kbNeeded = program.stop!.millisecondsSinceEpoch - (max(program.start!.millisecondsSinceEpoch, DateTime.now().millisecondsSinceEpoch)) / 1000 * (program.channelName!.toLowerCase().contains("hd") ? 4700 : 2900);
 
-  return true; // TO DO, jednostka free space oraz zeby to była prawdziwa ilosc wolnego miejsca
-  return freeSpace == null ? true : freeSpace > kbScheduled + kbNeeded;
+  return freeSpace == null ? true : (freeSpace / 8 * 1024) > kbScheduled + kbNeeded; // free space jednostka?? zalozylem ze MB
 }
