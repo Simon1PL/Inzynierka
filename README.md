@@ -4,7 +4,7 @@
 ### Run:
 1. Run raspberry or other device with the TV antenna and DVB-T tuner connected. (This device should be on all the time, backend app is recomended to be run there)
 2. Install tvheadend on the device from last point
-3. Run server app, run post method(serverUrl/generate/example) to generate example database
+3. Run server app, run post method(serverUrl/generate/example) to generate database
 4. Run backend app, set properties:
   - tvheadened.username=yourUsername (default for raspberry: pi)
   - tvheadened.password=yourPassword (default for raspberry: raspberry)
