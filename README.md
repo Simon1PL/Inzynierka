@@ -1,6 +1,6 @@
 # Remotely-managed DVB-T Tuner - frontend
-### Run:
-Download app: [download](https://simon1pl.github.io/Inzynierka)
+### Download app:
+[download](https://simon1pl.github.io/Inzynierka)
 ### Run:
 1. Run raspberry or other device with the TV antenna and DVB-T tuner connected. (This device should be on all the time, backend app is recomended to be run there)
 2. Install tvheadend on the device from last point
