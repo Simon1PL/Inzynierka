@@ -27,11 +27,11 @@ class ProgramListState extends State<ProgramList> {
 
   ProgramListState(this._list, this._errorText, _showPast) {
     this.filters.showPast = _showPast;
-    if (_showPast == false) {
-      _list = _list!.where((e) => e.stop!.isAfter(DateTime.now())).toList();
-    }
     if (_list != null) {
       _notFilteredList = new List<ProgramModel>.from(_list!);
+    }
+    if (_showPast == false) {
+      _list = _list!.where((e) => e.stop!.isAfter(DateTime.now())).toList();
     }
   }
 

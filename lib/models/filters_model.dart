@@ -9,7 +9,7 @@ class FiltersModel {
 
   void reset() {
     channelName = null;
-    channelName = null;
+    genre = null;
     showPast = true;
     dateFrom = null;
     dateTo = null;

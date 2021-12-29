@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/services/globals.dart';
 import 'package:project/services/login_service.dart';
 import 'package:project/widgets/Shared/app_bar.dart';
 import 'package:project/widgets/Shared/loader.dart';
@@ -17,6 +18,7 @@ class _LoginState extends State<Login> {
   String? _passwordError, _loginError;
   final _loginController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _urlController = TextEditingController();
   final FocusNode passwordFocusNode = FocusNode();
 
   redirect() async {
@@ -29,6 +31,11 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
     redirect();
+    setDefaultUrl();
+  }
+
+  void setDefaultUrl() async {
+    _urlController.text = await getServerUrl();
   }
 
   @override
@@ -92,6 +99,16 @@ class _LoginState extends State<Login> {
                       children: [
                         TextField(
                           textInputAction: TextInputAction.next,
+                          controller: _urlController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            border: InputBorder.none,
+                            labelText: "Server url",
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          ),
+                        ),
+                        TextField(
+                          textInputAction: TextInputAction.next,
                           onChanged: (text) => setState(() {
                             _loginError = null;
                           }),
@@ -145,7 +162,8 @@ class _LoginState extends State<Login> {
                           margin: const EdgeInsets.only(top: 20.0),
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await setServerUrl(_urlController.text);
                             _login();
                           },
                           child: Text(
