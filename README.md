@@ -1,3 +1,9 @@
+[Read everything about the project here](https://drive.google.com/file/d/1ZCHygVM_TyIZSGU7xJx6iwouh6C9nmll/view?usp=sharing)
+
+## Other repos
+- [backend](https://github.com/pawel00100/Tuner) - application on device with tuner
+- [server](https://github.com/what-ewer/Remotely-Managed-DVB-T-Tuner-backend) - middleware between backend and frontend
+
 # Remotely-managed DVB-T Tuner - frontend
 ### Download app:
 [download](https://simon1pl.github.io/Inzynierka)
